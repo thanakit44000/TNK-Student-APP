@@ -1273,7 +1273,7 @@
         /*
          * HYBRID CONNECTION
          * หลัง Deploy Code.gs เป็น Web App ให้นำ URL ที่ลงท้าย /exec มาใส่ด้านล่างหนึ่งครั้ง
-         * ไฟล์เดียวกันจะใช้ google.script.run เมื่อเปิดผ่าน GAS และใช้ fetch เมื่อเปิดผ่าน GitHub Pages
+         * ไฟล์เดียวกันจะใช้ google.script.run เมื่อเปิดผ่าน GAS และใช้ iframe RPC เมื่อเปิดผ่าน GitHub Pages
          */
         var GAS_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycby_P7kNXSizZ2xEm24ehwGyFvmK7a6LSehv93BvblxEWR9-r5U1osz2HcjqFLlIyufjUw/exec';
         var IS_NATIVE_GAS = typeof google !== 'undefined' && google.script && google.script.run;
@@ -1291,9 +1291,9 @@
                 field('transport','iframe'); field('requestId',requestId);
                 field('origin',location.protocol === 'http:' || location.protocol === 'https:' ? location.origin : '*');
                 field('payload',JSON.stringify({method:method,args:Array.isArray(args)?args:[]}));
-                var timer=setTimeout(function(){cleanup();reject(new Error('GAS API ใช้เวลานานเกินไป กรุณาตรวจสอบ Deployment และอินเทอร์เน็ต'));},120000);
+                var timer=setTimeout(function(){cleanup();reject(new Error('GAS API ไม่ตอบกลับภายใน 30 วินาที กรุณาตรวจสอบว่า Deploy Code.gs รุ่นล่าสุดแล้ว'));},30000);
                 function cleanup(){clearTimeout(timer);window.removeEventListener('message',receive);form.remove();setTimeout(function(){frame.remove();},0);}
-                function receive(event){var data=event.data;if(!data||data.requestId!==requestId||event.source!==frame.contentWindow)return;cleanup();if(data.status==='success')resolve(data.result);else reject(new Error(data.message||'GAS API ทำงานไม่สำเร็จ'));}
+                function receive(event){var data=event.data;if(!data||data.requestId!==requestId)return;cleanup();if(data.status==='success')resolve(data.result);else reject(new Error(data.message||'GAS API ทำงานไม่สำเร็จ'));}
                 window.addEventListener('message',receive);document.body.appendChild(frame);document.body.appendChild(form);form.submit();
             });
         }
