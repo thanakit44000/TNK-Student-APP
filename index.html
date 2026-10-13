@@ -672,6 +672,9 @@
                             <p class="text-sm text-gray-500 mt-1">เลือกห้องเรียน และคลิกที่ชื่อของคุณเพื่อตรวจสอบและส่งงาน</p>
                         </div>
                         <div class="flex gap-2 w-full sm:w-auto no-print">
+                            <select id="rosterLevelFilter" onchange="updateRoomFilterForLevel('roster');renderStudentRoster()" class="px-4 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:border-purple-500 outline-none flex-1 sm:flex-none font-bold text-purple-700">
+                                <option value="all">ทุกระดับชั้น</option>
+                            </select>
                             <select id="rosterRoomFilter" onchange="renderStudentRoster()" class="px-4 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:border-purple-500 outline-none flex-1 sm:flex-none font-bold text-purple-700">
                                 <option value="all">ทุกห้องเรียน</option>
                             </select>
@@ -774,6 +777,9 @@
                     </div>
 
                     <div class="flex gap-2 mb-4 w-full sm:w-auto overflow-x-auto no-print">
+                        <select id="summaryLevelFilter" onchange="updateRoomFilterForLevel('summary');renderSummaryTable()" class="px-4 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:border-purple-500 outline-none flex-1 sm:flex-none font-bold">
+                            <option value="all">ทุกระดับชั้น</option>
+                        </select>
                         <select id="summaryRoomFilter" onchange="renderSummaryTable()" class="px-4 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:border-purple-500 outline-none flex-1 sm:flex-none font-bold">
                             <option value="all">ทุกห้องเรียน</option>
                         </select>
@@ -802,8 +808,9 @@
                         <div><h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-images text-purple-600"></i> ผลงานนักเรียนทั้งหมด</h2><p class="text-sm text-gray-500 mt-1">แกลเลอรีรวมไฟล์ที่นักเรียนอัปโหลดจากทุกงานและทุกห้อง</p></div>
                         <div class="bg-purple-50 text-purple-700 px-4 py-2 rounded-xl text-sm font-bold">ทั้งหมด <span id="allUploadsCount">0</span> ผลงาน</div>
                     </div>
-                    <div class="glass-card p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-4 gap-3">
+                    <div class="glass-card p-4 rounded-2xl mb-6 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-3">
                         <input id="allUploadsSearch" oninput="renderAllUploads()" placeholder="ค้นหาชื่อหรือรหัสนักเรียน..." class="px-4 py-2.5 border rounded-xl text-sm outline-none focus:border-purple-500">
+                        <select id="allUploadsLevel" onchange="updateRoomFilterForLevel('allUploads');renderAllUploads()" class="px-4 py-2.5 border rounded-xl text-sm bg-white"><option value="all">ทุกระดับชั้น</option></select>
                         <select id="allUploadsCategory" onchange="renderAllUploads()" class="px-4 py-2.5 border rounded-xl text-sm bg-white"></select>
                         <select id="allUploadsRoom" onchange="renderAllUploads()" class="px-4 py-2.5 border rounded-xl text-sm bg-white"></select>
                         <select id="allUploadsStatus" onchange="renderAllUploads()" class="px-4 py-2.5 border rounded-xl text-sm bg-white"><option value="all">ทุกสถานะ</option><option value="pending">รอตรวจ</option><option value="pass">ตรวจผ่าน</option><option value="revise">ต้องแก้ไข</option></select>
@@ -1245,9 +1252,10 @@
     <!-- Modals -->
     <div id="ahImageModal" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity">
         <button onclick="ahCloseModal()" class="absolute top-4 right-4 text-white hover:text-red-400 text-3xl z-[110]"><i class="fas fa-times"></i></button>
+        <button id="modalZoomBtn" onclick="ahToggleModalZoom(event)" class="absolute top-4 left-4 text-white bg-black/50 hover:bg-black/80 rounded-full w-11 h-11 items-center justify-center z-[110] hidden" title="ขยายรูป"><i class="fas fa-magnifying-glass-plus"></i></button>
         <div class="relative w-full max-w-5xl flex justify-center items-center h-full group">
             <button id="modalPrevBtn" onclick="ahPrevImage(event)" class="absolute left-4 text-white bg-black/50 hover:bg-black/80 rounded-full w-12 h-12 flex items-center justify-center transition-all z-[110] hidden"><i class="fas fa-chevron-left"></i></button>
-            <img id="ahModalImage" src="" class="hidden max-h-[90vh] max-w-full object-contain rounded-lg shadow-2xl">
+            <img id="ahModalImage" src="" onclick="ahToggleModalZoom(event)" class="hidden max-h-[90vh] max-w-full object-contain rounded-lg shadow-2xl cursor-zoom-in transition-transform duration-200">
             <div id="ahModalPdf" class="hidden flex flex-col items-center bg-white p-10 rounded-2xl text-center shadow-2xl"><i id="ahModalFileIcon" class="fas fa-file-alt text-indigo-500 text-6xl mb-4"></i><h3 id="ahModalFileTitle" class="text-lg font-bold mb-4">ไฟล์แนบผลงาน</h3><a id="ahModalPdfLink" href="#" target="_blank" rel="noopener noreferrer" class="bg-indigo-600 text-white px-6 py-2.5 rounded-xl font-bold hover:bg-indigo-700"><i class="fas fa-external-link-alt mr-2"></i> เปิดหรือดาวน์โหลดไฟล์</a></div>
             <button id="modalNextBtn" onclick="ahNextImage(event)" class="absolute right-4 text-white bg-black/50 hover:bg-black/80 rounded-full w-12 h-12 flex items-center justify-center transition-all z-[110] hidden"><i class="fas fa-chevron-right"></i></button>
             <div id="modalCounter" class="absolute bottom-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm font-medium z-[110] hidden">1 / 1</div>
@@ -1360,6 +1368,8 @@
         var students = [], allStudents = [], activeGlobalLevel = '';
 
         function studentLevel(st){return String((st&&st.class)||String((st&&st.room)||'').split('/')[0]||'').trim();}
+        function levelOptionsHtml(){var source=allStudents.length?allStudents:students;return '<option value="all">ทุกระดับชั้น</option>'+Array.from(new Set(source.map(studentLevel).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'th',{numeric:true});}).map(function(level){return '<option value="'+profileEsc(level)+'">'+profileEsc(level)+'</option>';}).join('');}
+        function updateRoomFilterForLevel(scope){var levelEl=document.getElementById(scope+'LevelFilter')||document.getElementById(scope+'Level'),roomEl=document.getElementById(scope+'RoomFilter')||document.getElementById(scope+'Room');if(!roomEl)return;var selected=roomEl.value,level=levelEl?levelEl.value:'all',source=allStudents.length?allStudents:students,rooms=Array.from(new Set(source.filter(function(st){return level==='all'||studentLevel(st)===level;}).map(function(st){return String(st.room||'');}).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'th',{numeric:true});});roomEl.innerHTML='<option value="all">ทุกห้องเรียน</option>'+rooms.map(function(room){return '<option value="'+profileEsc(room)+'">'+profileEsc(room)+'</option>';}).join('');roomEl.value=rooms.indexOf(selected)>=0?selected:'all';}
         function mergeVisibleStudentsToMaster(){if(!allStudents.length){allStudents=students.slice();return;}if(activeGlobalLevel){allStudents=allStudents.filter(function(st){return studentLevel(st)!==activeGlobalLevel;}).concat(students);}else allStudents=students.slice();}
         function applyGlobalLevelFilter(level){mergeVisibleStudentsToMaster();activeGlobalLevel=String(level||'');students=activeGlobalLevel?allStudents.filter(function(st){return studentLevel(st)===activeGlobalLevel;}):allStudents.slice();populateGlobalOptions();var active=document.querySelector('.view-section.active');switchView(active?active.id.replace('view-',''):'dashboard');}
         var attendanceHistory = {}; 
@@ -1400,6 +1410,7 @@
             document.getElementById('hmClass').innerHTML = classHtml;
             document.getElementById('rosterRoomFilter').innerHTML = '<option value="all">ทุกห้องเรียน</option>' + classrooms.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('summaryRoomFilter').innerHTML = '<option value="all">ทุกห้องเรียน</option>' + classrooms.map(c => `<option value="${c}">${c}</option>`).join('');
+            ['rosterLevelFilter','summaryLevelFilter','allUploadsLevel'].forEach(function(id){var el=document.getElementById(id);if(el){var current=el.value;el.innerHTML=levelOptionsHtml();el.value=Array.from(el.options).some(function(o){return o.value===current;})?current:'all';}});
             document.getElementById('reportRoomSelect').innerHTML = '<option value="all">ทุกห้อง</option>' + classrooms.map(c => `<option value="${c}">${c}</option>`).join('');
             
             const setRoomFilter = document.getElementById('settingsRoomFilter');
@@ -1761,10 +1772,12 @@
 
         function renderStudentRoster() {
             const grid = document.getElementById('rosterGrid');
+            const levelF = (document.getElementById('rosterLevelFilter')||{}).value || 'all';
             const roomF = document.getElementById('rosterRoomFilter').value;
             const searchQ = document.getElementById('rosterSearch').value.toLowerCase();
 
-            let list = students;
+            let list = (allStudents.length ? allStudents : students).slice();
+            if(levelF !== 'all') list = list.filter(s => studentLevel(s) === levelF);
             if(roomF !== 'all') list = list.filter(s => s.room === roomF);
             if(searchQ) list = list.filter(s => (s.fname+' '+s.lname).toLowerCase().includes(searchQ) || s.code.includes(searchQ));
             document.getElementById('rosterResultCount').innerText=list.length;
@@ -2261,6 +2274,7 @@
                 if (!parsed || parsed._sys_error || parsed.status !== 'success') {
                     throw new Error((parsed && parsed._sys_error) || 'Server ไม่ยืนยันการบันทึกงาน');
                 }
+                dataRevision = Number(parsed.revision || dataRevision || 0);
 
                 const existingIndex = ahSubmissions.findIndex(s => s.catId === catId && s.studentCode === st.code);
                 if(existingIndex >= 0) ahSubmissions[existingIndex] = payload;
@@ -2486,10 +2500,12 @@
         function renderSummaryTable() {
             const thead = document.getElementById('summaryTableHead'); 
             const tbody = document.getElementById('summaryTableBody');
+            const levelF = (document.getElementById('summaryLevelFilter')||{}).value || 'all';
             const roomF = document.getElementById('summaryRoomFilter').value; 
             const statF = document.getElementById('summaryStatusFilter').value;
 
-            let list = students; 
+            let list = (allStudents.length ? allStudents : students).slice();
+            if (levelF !== 'all') list = list.filter(s => studentLevel(s) === levelF);
             if (roomF !== 'all') list = list.filter(s => s.room === roomF);
             
             let headHTML = `<tr><th class="p-3 text-left w-64 sticky left-0 z-20">ชื่อ - นามสกุล</th><th class="p-3 text-center w-24">ห้อง</th>`;
@@ -2598,24 +2614,27 @@
         function initAllUploadsView() {
             document.getElementById('allUploadsCategory').innerHTML='<option value="all">ทุกงาน</option>'+ahCategories.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
             document.getElementById('allUploadsRoom').innerHTML='<option value="all">ทุกห้อง</option>'+classrooms.map(r=>`<option value="${r}">${r}</option>`).join('');
+            var level=document.getElementById('allUploadsLevel');if(level)level.innerHTML=levelOptionsHtml();
             renderAllUploads();
         }
 
         function renderAllUploads() {
             const searchEl = document.getElementById('allUploadsSearch');
             const catEl = document.getElementById('allUploadsCategory');
+            const levelEl = document.getElementById('allUploadsLevel');
             const roomEl = document.getElementById('allUploadsRoom');
             const statusEl = document.getElementById('allUploadsStatus');
 
             const search = searchEl ? searchEl.value.trim().toLowerCase() : ''; 
             const cat = catEl ? catEl.value : 'all'; 
+            const level = levelEl ? levelEl.value : 'all';
             const room = roomEl ? roomEl.value : 'all'; 
             const status = statusEl ? statusEl.value : 'all';
 
             const list = ahSubmissions.filter(sub => {
-                const st = students.find(s=>s.code===sub.studentCode) || {}; 
+                const st = (allStudents.length?allStudents:students).find(s=>String(s.code)===String(sub.studentCode)) || {}; 
                 const full = `${st.prefix||''}${st.fname||''} ${st.lname||''} ${st.code||''}`.toLowerCase();
-                return (cat==='all'||sub.catId===cat) && (room==='all'||sub.room===room) && (status==='all'||sub.status===status) && (!search||full.includes(search));
+                return (cat==='all'||sub.catId===cat) && (level==='all'||studentLevel(st)===level) && (room==='all'||sub.room===room) && (status==='all'||sub.status===status) && (!search||full.includes(search));
             });
 
             document.getElementById('allUploadsCount').innerText=list.length; 
@@ -2623,10 +2642,10 @@
             const statusMap={pending:['รอตรวจ','bg-slate-700'],pass:['ตรวจผ่าน','bg-emerald-500'],revise:['ต้องแก้ไข','bg-amber-500']};
             
             document.getElementById('allUploadsGrid').innerHTML = list.map(sub => {
-                const st = students.find(s=>s.code===sub.studentCode)||{}; 
+                const st = (allStudents.length?allStudents:students).find(s=>String(s.code)===String(sub.studentCode))||{}; 
                 const category = ahCategories.find(c=>c.id===sub.catId)||{}; 
                 const first = (sub.files && sub.files[0])||''; 
-                const isImage = first.includes('data:image/') || first.includes('lh3.googleusercontent.com'); 
+                const isImage = ahIsImageUrl(first); 
                 const state = statusMap[sub.status]||statusMap.pending;
                 
                 const preview = first && !isImage ? 
@@ -2659,6 +2678,11 @@
             if(sub && sub.files && sub.files.length) ahOpenImageGallery(sub.files); 
         }
 
+        function ahIsImageUrl(url) {
+            url=String(url||'');
+            return /^data:image\//i.test(url) || /(?:lh3|googleusercontent)\.com/i.test(url) || /\.(?:jpe?g|png|gif|webp|avif)(?:[?#]|$)/i.test(url);
+        }
+
         function ahOpenImageGallery(filesArr) { 
             if(!filesArr || filesArr.length === 0) return; 
             ahModalImagesList = filesArr; 
@@ -2670,8 +2694,11 @@
         
         function ahUpdateModalView() {
             const url = ahModalImagesList[ahModalImageIndex]; 
-            const isImage = url.includes('data:image/') || url.includes('lh3.googleusercontent.com');
+            const isImage = ahIsImageUrl(url);
             const isPdf = url.includes('application/pdf') || url.toLowerCase().includes('.pdf');
+            const modalImage=document.getElementById('ahModalImage'),zoomBtn=document.getElementById('modalZoomBtn');
+            modalImage.classList.remove('scale-150','cursor-zoom-out');modalImage.classList.add('cursor-zoom-in');
+            if(zoomBtn){zoomBtn.classList.toggle('hidden',!isImage);zoomBtn.classList.toggle('flex',isImage);zoomBtn.innerHTML='<i class="fas fa-magnifying-glass-plus"></i>';}
             
             if(!isImage) { 
                 document.getElementById('ahModalImage').classList.add('hidden'); 
@@ -2699,6 +2726,8 @@
                 counter.classList.add('hidden');
             }
         }
+
+        function ahToggleModalZoom(e){if(e)e.stopPropagation();var image=document.getElementById('ahModalImage'),button=document.getElementById('modalZoomBtn');if(!image||image.classList.contains('hidden'))return;var zoomed=image.classList.toggle('scale-150');image.classList.toggle('cursor-zoom-out',zoomed);image.classList.toggle('cursor-zoom-in',!zoomed);if(button)button.innerHTML=zoomed?'<i class="fas fa-magnifying-glass-minus"></i>':'<i class="fas fa-magnifying-glass-plus"></i>';}
         
         function ahNextImage(e) { 
             if(e) e.stopPropagation(); 
@@ -4466,6 +4495,8 @@ window.openTeacherProfileEditor=async function(id){if(!isAuth)return openLogin()
 </script>
 <script>
 // Public online-exam hub: derives enabled quizzes from published lessons.
+document.addEventListener('click',function(event){var image=event.target.closest('.teacher-gallery img');if(!image)return;event.preventDefault();event.stopPropagation();var images=Array.from(image.closest('.teacher-gallery').querySelectorAll('img')).map(function(img){return img.currentSrc||img.src;});var index=images.indexOf(image.currentSrc||image.src);if(typeof Swal!=='undefined')Swal.close();setTimeout(function(){ahOpenImageGallery(images);ahModalImageIndex=Math.max(0,index);ahUpdateModalView();},80);},true);
+document.addEventListener('keydown',function(event){var modal=document.getElementById('ahImageModal');if(!modal||modal.classList.contains('hidden'))return;if(event.key==='ArrowRight'){event.preventDefault();ahNextImage(event);}else if(event.key==='ArrowLeft'){event.preventDefault();ahPrevImage(event);}else if(event.key==='Escape'){event.preventDefault();ahCloseModal();}});
 function renderOnlineExamHub(){
     var grid=document.getElementById('onlineExamGrid');if(!grid)return;
     var lessonList=window.getDemoLessons?window.getDemoLessons():(lessons||[]),now=Date.now(),all=[];
