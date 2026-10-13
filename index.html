@@ -1697,7 +1697,7 @@
             }
         }
 
-        async function syncDataToServer(authOverride) {
+        async function syncDataToServer(authOverride, fastMode) {
             return new Promise((resolve, reject) => {
                 lessons = window.getDemoLessons ? window.getDemoLessons() : lessons;
                 quizAttempts = window.getQuizAttempts ? window.getQuizAttempts() : quizAttempts;
@@ -1710,16 +1710,21 @@
                 loader.classList.remove('opacity-0', 'pointer-events-none');
 
                 if (IS_GAS_ENV) {
+                    let attempts = 0;
+                    const send = function() {
+                    attempts++;
                     google.script.run
                         .withSuccessHandler(function(res) {
-                            loader.classList.add('opacity-0', 'pointer-events-none');
                             let parsed = res;
                             if (typeof res === 'string' && res.trim().startsWith('{')) parsed = JSON.parse(res);
                             
                             if (parsed && parsed._sys_error) {
+                                if(attempts < 3 && /คิว|ล็อก|lock/i.test(parsed._sys_error)) return setTimeout(send, 700 * attempts);
+                                loader.classList.add('opacity-0', 'pointer-events-none');
                                 Swal.fire('บันทึกล้มเหลว', parsed._sys_error, 'error');
                                 reject(new Error(parsed._sys_error));
                             } else {
+                                loader.classList.add('opacity-0', 'pointer-events-none');
                                 resolve(true);
                             }
                         })
@@ -1728,7 +1733,9 @@
                             Swal.fire({toast:true, position:'top-end', icon:'error', title:'เซิร์ฟเวอร์ไม่ตอบสนอง', text:String(error), showConfirmButton:false, timer:3000});
                             reject(error);
                         })
-                        .saveAllData(payloadStr,(authOverride||teacherAuth).username,(authOverride||teacherAuth).password);
+                        .saveAllData(payloadStr,(authOverride||teacherAuth).username,(authOverride||teacherAuth).password,!!fastMode);
+                    };
+                    send();
                 } else {
                     setTimeout(() => {
                         loader.classList.add('opacity-0', 'pointer-events-none');
@@ -2658,7 +2665,7 @@
                             <div><label class="block text-xs font-bold text-gray-500 mb-1">คะแนนเต็ม</label><input id="swGradeMaxScore" type="number" min="1" value="${sub.maxScore || 100}" class="w-full px-3 py-2 border rounded-lg text-sm focus:border-purple-500"></div>
                         </div>
                         <label class="block text-xs font-bold text-gray-500 mb-1">ข้อเสนอแนะ</label>
-                        <textarea id="swGradeComment" class="w-full px-3 py-2 border rounded-lg text-sm h-20 focus:border-purple-500 resize-none">${sub.comment||''}</textarea>
+                        <textarea id="swGradeComment" class="w-full px-3 py-2 border rounded-lg text-sm h-20 focus:border-purple-500 resize-none">${profileEsc(sub.comment||'')}</textarea>
                     </div>
                 `,
                 showCancelButton: true, confirmButtonText: 'บันทึก', confirmButtonColor: '#7c3aed',
@@ -2672,15 +2679,24 @@
                 }
             }).then(async r => {
                 if(r.isConfirmed) { 
-                    sub.status = r.value.status; 
-                    sub.score = r.value.score; 
-                    sub.maxScore = r.value.maxScore; 
-                    sub.comment = r.value.comment; 
-                    await syncDataToServer(); 
-                    if(document.getElementById('view-summary').classList.contains('active')) renderSummaryTable();
-                    else if(document.getElementById('view-all-uploads').classList.contains('active')) renderAllUploads();
-                    else if(document.getElementById('view-student-profile').classList.contains('active')) renderStudentAssignments();
-                    Swal.fire({toast:true, position:'top-end', icon:'success', title:'บันทึกผลตรวจแล้ว', showConfirmButton:false, timer:1500});
+                    Swal.fire({title:'กำลังบันทึกผลตรวจ...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+                    try {
+                        let parsed,attempt=0;
+                        while(attempt<3) {
+                            attempt++;
+                            const raw=await new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).reviewSubmissionFast(sub.id,r.value,teacherAuth.username,teacherAuth.password));
+                            parsed=typeof raw==='string'?JSON.parse(raw):raw;
+                            if(!(parsed&&parsed._sys_error)) break;
+                            if(attempt<3&&/คิว|ล็อก|lock/i.test(parsed._sys_error)){await new Promise(resolve=>setTimeout(resolve,500*attempt));continue;}
+                            throw new Error(parsed._sys_error);
+                        }
+                        if(!parsed||parsed._sys_error||!parsed.submission)throw new Error((parsed&&parsed._sys_error)||'Server ไม่ยืนยันการบันทึกผลตรวจ');
+                        Object.assign(sub,parsed.submission);
+                        if(document.getElementById('view-summary').classList.contains('active')) renderSummaryTable();
+                        else if(document.getElementById('view-all-uploads').classList.contains('active')) renderAllUploads();
+                        else if(document.getElementById('view-student-profile').classList.contains('active')) renderStudentAssignments();
+                        Swal.fire({toast:true, position:'top-end', icon:'success', title:'บันทึกผลตรวจแล้ว', showConfirmButton:false, timer:1200});
+                    } catch(error) { Swal.fire('บันทึกผลตรวจไม่สำเร็จ',error.message||String(error),'error'); }
                 }
             });
         }
@@ -4606,9 +4622,9 @@ async function stopQRCenterCamera(){if(qrCenterScanner){try{if(qrCenterScanner.i
 async function scanQRCenterImage(event){var f=event.target.files&&event.target.files[0];if(!f)return;try{if(!qrCenterScanner)qrCenterScanner=new Html5Qrcode('qrCenterReader');if(qrCenterScanner.isScanning)await qrCenterScanner.stop();handleQRCenterValue(await qrCenterScanner.scanFile(f,true));}catch(e){var status=document.getElementById('qrCenterStatus');if(status)status.innerHTML='<span class="text-rose-600 font-bold">ไม่พบ QR ที่อ่านได้ในภาพ</span>';}}
 function manualQRCenterScan(){var input=document.getElementById('qrCenterManual');if(!input||!input.value.trim())return;handleQRCenterValue(input.value.trim());input.value='';}
 async function handleQRCenterValue(raw){var now=Date.now();if(raw===qrCenterLastValue&&now-qrCenterLastTime<1800)return;qrCenterLastValue=raw;qrCenterLastTime=now;var parsed=parseStudentQRValue(raw),st=qrCenterStudent(parsed.code),status=document.getElementById('qrCenterStatus');if(!st){if(status)status.innerHTML='<span class="text-rose-600 font-bold">ไม่พบนักเรียนรหัส '+profileEsc(parsed.code)+'</span>';else Swal.fire('ไม่พบนักเรียน','รหัส '+parsed.code,'error');return;}try{await applyQRCenterAction(st);var msg='<span class="text-emerald-700 font-bold"><i class="fas fa-check-circle mr-1"></i>'+profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||''))+'</span><br><small>'+qrCenterModeLabel(document.getElementById('qrCenterMode').value)+' · '+new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+'</small>';if(status)status.innerHTML=msg;else Swal.fire({toast:true,position:'top-end',icon:'success',title:'บันทึกแล้ว',showConfirmButton:false,timer:1400});}catch(e){if(status)status.innerHTML='<span class="text-rose-600 font-bold">'+profileEsc(e.message||String(e))+'</span>';else Swal.fire('บันทึกไม่สำเร็จ',e.message||String(e),'error');}}
-async function applyQRCenterAction(st){var error=qrCenterValidateSettings();if(error)throw new Error(error);var mode=document.getElementById('qrCenterMode').value,id='qr_'+Date.now()+'_'+Math.floor(Math.random()*1000),event={id:id,studentCode:st.code,stId:st.id,room:st.room,mode:mode,date:new Date().toISOString(),voided:false};if(mode==='enter'||mode==='exit'){event.building=Number(document.getElementById('qrCenterBuilding').value);event.location=document.getElementById('qrCenterRoom').value.trim();}else if(mode.indexOf('behavior_')===0){var sign=mode==='behavior_plus'?1:-1,points=Number(document.getElementById('qrCenterPoints').value);event.reason=document.getElementById('qrCenterReason').value.trim();event.points=sign*points;event.behaviorId='beh_'+id;st.score=(Number(st.score)||0)+event.points;behaviorRecords.unshift({id:event.behaviorId,stId:st.id,studentCode:st.code,date:new Date().toLocaleDateString('th-TH'),topic:event.reason,change:event.points,source:'qr'});}else if(mode==='assignment'){var catId=document.getElementById('qrCenterAssignment').value,cat=(ahCategories||[]).find(function(c){return String(c.id)===String(catId);});event.catId=catId;event.assignmentLabel=cat?(cat.label||cat.title||catId):catId;event.previousSubmission=null;var ix=ahSubmissions.findIndex(function(s){return String(s.catId)===String(catId)&&String(s.studentCode)===String(st.code);});if(ix>=0)event.previousSubmission=JSON.parse(JSON.stringify(ahSubmissions[ix]));var sub={id:'sub_'+Date.now()+'_'+Math.floor(Math.random()*1000),catId:catId,studentCode:st.code,room:st.room,files:[],caption:'เช็กส่งงานด้วย QR',date:new Date().toISOString(),status:'pending',comment:'',source:'qr',qrEventId:id};if(ix>=0)ahSubmissions[ix]=sub;else ahSubmissions.unshift(sub);event.submissionId=sub.id;}qrEvents.unshift(event);await syncDataToServer();renderQRCenterHistory();updateDashboardStats();}
+async function applyQRCenterAction(st){var error=qrCenterValidateSettings();if(error)throw new Error(error);var mode=document.getElementById('qrCenterMode').value,id='qr_'+Date.now()+'_'+Math.floor(Math.random()*1000),event={id:id,studentCode:st.code,stId:st.id,room:st.room,mode:mode,date:new Date().toISOString(),voided:false};if(mode==='enter'||mode==='exit'){event.building=Number(document.getElementById('qrCenterBuilding').value);event.location=document.getElementById('qrCenterRoom').value.trim();}else if(mode.indexOf('behavior_')===0){var sign=mode==='behavior_plus'?1:-1,points=Number(document.getElementById('qrCenterPoints').value);event.reason=document.getElementById('qrCenterReason').value.trim();event.points=sign*points;event.behaviorId='beh_'+id;st.score=(Number(st.score)||0)+event.points;behaviorRecords.unshift({id:event.behaviorId,stId:st.id,studentCode:st.code,date:new Date().toLocaleDateString('th-TH'),topic:event.reason,change:event.points,source:'qr'});}else if(mode==='assignment'){var catId=document.getElementById('qrCenterAssignment').value,cat=(ahCategories||[]).find(function(c){return String(c.id)===String(catId);});event.catId=catId;event.assignmentLabel=cat?(cat.label||cat.title||catId):catId;event.previousSubmission=null;var ix=ahSubmissions.findIndex(function(s){return String(s.catId)===String(catId)&&String(s.studentCode)===String(st.code);});if(ix>=0)event.previousSubmission=JSON.parse(JSON.stringify(ahSubmissions[ix]));var sub={id:'sub_'+Date.now()+'_'+Math.floor(Math.random()*1000),catId:catId,studentCode:st.code,room:st.room,files:[],caption:'เช็กส่งงานด้วย QR',date:new Date().toISOString(),status:'pending',comment:'',source:'qr',qrEventId:id};if(ix>=0)ahSubmissions[ix]=sub;else ahSubmissions.unshift(sub);event.submissionId=sub.id;}qrEvents.unshift(event);await syncDataToServer(null,true);renderQRCenterHistory();updateDashboardStats();}
 function renderQRCenterHistory(){var box=document.getElementById('qrCenterHistory'),count=document.getElementById('qrCenterTodayCount');if(!box)return;var today=getLocalISODate(),list=(qrEvents||[]).filter(function(e){return String(e.date||'').slice(0,10)===today;});if(count)count.textContent=list.filter(function(e){return !e.voided;}).length+' รายการ';box.innerHTML=list.slice(0,100).map(function(e){var st=qrCenterStudent(e.studentCode)||{},detail=e.mode==='enter'||e.mode==='exit'?'อาคาร '+(e.building||'-')+(e.location?' · '+profileEsc(e.location):''):e.mode.indexOf('behavior_')===0?((e.points>0?'+':'')+e.points+' · '+profileEsc(e.reason||'')):profileEsc(e.assignmentLabel||'');return '<div class="p-4 flex items-center gap-3 '+(e.voided?'opacity-45 bg-slate-50':'')+'"><span class="w-10 h-10 rounded-xl '+(e.mode==='exit'?'bg-orange-50 text-orange-600':e.mode.indexOf('behavior_')===0?'bg-amber-50 text-amber-600':e.mode==='assignment'?'bg-blue-50 text-blue-600':'bg-emerald-50 text-emerald-600')+' grid place-items-center"><i class="fas '+(e.mode==='assignment'?'fa-clipboard-check':e.mode.indexOf('behavior_')===0?'fa-star':'fa-door-open')+'"></i></span><div class="flex-1 min-w-0"><b class="block text-sm text-slate-800">'+profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||e.studentCode||''))+'</b><small class="text-slate-500">'+qrCenterModeLabel(e.mode)+' · '+detail+' · '+new Date(e.date).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+'</small></div>'+(e.voided?'<span class="text-xs font-bold text-slate-400">ยกเลิกแล้ว</span>':'<button onclick="undoQRCenterEvent(\''+e.id+'\')" class="px-3 py-2 rounded-lg bg-rose-50 text-rose-600 text-xs font-bold">ยกเลิก</button>')+'</div>';}).join('')||'<div class="py-16 text-center text-slate-400"><i class="fas fa-qrcode text-4xl mb-3 block"></i>ยังไม่มีรายการสแกนวันนี้</div>';}
-async function undoQRCenterEvent(id){var e=qrEvents.find(function(x){return x.id===id;});if(!e||e.voided)return;var answer=await Swal.fire({icon:'warning',title:'ยกเลิกรายการนี้?',text:'ระบบจะย้อนผลคะแนนหรืองานที่เกิดจากการสแกนนี้',showCancelButton:true,confirmButtonText:'ยืนยันยกเลิก',cancelButtonText:'กลับ',confirmButtonColor:'#e11d48'});if(!answer.isConfirmed)return;var st=qrCenterStudent(e.studentCode);if(e.mode.indexOf('behavior_')===0){behaviorRecords=behaviorRecords.filter(function(b){return b.id!==e.behaviorId;});if(st)st.score=(Number(st.score)||0)-Number(e.points||0);}else if(e.mode==='assignment'){ahSubmissions=ahSubmissions.filter(function(s){return s.qrEventId!==e.id;});if(e.previousSubmission)ahSubmissions.unshift(e.previousSubmission);}e.voided=true;e.voidedAt=new Date().toISOString();await syncDataToServer();renderQRCenterHistory();updateDashboardStats();}
+async function undoQRCenterEvent(id){var e=qrEvents.find(function(x){return x.id===id;});if(!e||e.voided)return;var answer=await Swal.fire({icon:'warning',title:'ยกเลิกรายการนี้?',text:'ระบบจะย้อนผลคะแนนหรืองานที่เกิดจากการสแกนนี้',showCancelButton:true,confirmButtonText:'ยืนยันยกเลิก',cancelButtonText:'กลับ',confirmButtonColor:'#e11d48'});if(!answer.isConfirmed)return;var st=qrCenterStudent(e.studentCode);if(e.mode.indexOf('behavior_')===0){behaviorRecords=behaviorRecords.filter(function(b){return b.id!==e.behaviorId;});if(st)st.score=(Number(st.score)||0)-Number(e.points||0);}else if(e.mode==='assignment'){ahSubmissions=ahSubmissions.filter(function(s){return s.qrEventId!==e.id;});if(e.previousSubmission)ahSubmissions.unshift(e.previousSubmission);}e.voided=true;e.voidedAt=new Date().toISOString();await syncDataToServer(null,true);renderQRCenterHistory();updateDashboardStats();}
 function printStudentQRCardsFromCenter(){var room=prompt('ระบุห้องเรียนที่ต้องการพิมพ์ QR',classrooms[0]||'');if(!room)return;var select=document.getElementById('attClass');if(select){select.value=room;printStudentQRCards();}}
 
 var smartSchoolBuildings=[1,2,3,4,5,6,7,8];
