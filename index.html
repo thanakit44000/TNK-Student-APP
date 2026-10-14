@@ -14,11 +14,10 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Prompt -->
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- ฟอนต์หน้าจอและฟอนต์สำรองสำหรับเอกสารภาษาไทย -->
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700;800&family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- FontAwesome -->
@@ -91,12 +90,14 @@
 
         /* การตั้งค่าสำหรับการพิมพ์ PDF */
         @media print {
-            @page { size: A4 portrait; margin: 8mm 9mm; }
-            @page summaryLandscape { size: A4 landscape; margin: 7mm; }
-            @page reportPortrait { size: A4 portrait; margin: 8mm 9mm; }
+            @page { size: A4 portrait; margin: 20mm 20mm 20mm 25mm; }
+            @page summaryLandscape { size: A4 landscape; margin: 15mm; }
+            @page reportPortrait { size: A4 portrait; margin: 20mm 20mm 20mm 25mm; }
             html, body, main, #pageContent { height: auto !important; min-height: auto !important; overflow: visible !important; position: static !important; background: white !important; }
             html, body { font-family: "TH Sarabun New", "TH SarabunPSK", "TH Sarabun PSK", "Sarabun", sans-serif !important; font-size: 16pt !important; line-height: 1.05 !important; color: #000 !important; }
-            * { box-shadow: none !important; text-shadow: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            * { font-family: inherit !important; box-shadow: none !important; text-shadow: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            input, select, textarea, button { font: inherit !important; }
+            a { color: #000 !important; text-decoration: none !important; }
             aside, header, footer, #systemLoader, #loginScreen, .no-print { display: none !important; }
             .print-only { display: block !important; }
             .view-section { display: none !important; }
@@ -793,7 +794,7 @@
                             <button onclick="ahOpenAddCategoryModal()" class="teacher-only px-4 py-2 bg-indigo-100 text-indigo-700 rounded-xl font-bold hover:bg-indigo-200 transition text-sm flex items-center">
                                 <i class="fas fa-tasks mr-1.5"></i> มอบหมายงาน
                             </button>
-                            <button onclick="window.print()" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold shadow hover:bg-gray-900 transition text-sm flex items-center">
+                            <button onclick="printOfficialCurrentView('รายงานสรุปการส่งงาน')" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold shadow hover:bg-gray-900 transition text-sm flex items-center">
                                 <i class="fas fa-print mr-1.5"></i> พิมพ์ / PDF
                             </button>
                         </div>
@@ -1143,7 +1144,7 @@
 
                 <!-- ================= VIEW: GRADEBOOK ================= -->
                 <section id="view-gradebook" class="view-section max-w-7xl mx-auto pb-12">
-                    <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-table-list text-purple-600 mr-2"></i>สมุดคะแนนรวม</h2><p class="text-sm text-gray-500 mt-1">รวมคะแนนงานและแบบทดสอบของนักเรียนทุกคน</p></div><div class="no-print flex gap-2"><button onclick="exportGradebookCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm"><i class="fas fa-file-csv mr-2"></i>Export CSV</button><button onclick="window.print()" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div></div>
+                    <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-table-list text-purple-600 mr-2"></i>สมุดคะแนนรวม</h2><p class="text-sm text-gray-500 mt-1">รวมคะแนนงานและแบบทดสอบของนักเรียนทุกคน</p></div><div class="no-print flex gap-2"><button onclick="exportGradebookCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm"><i class="fas fa-file-csv mr-2"></i>Export CSV</button><button onclick="printOfficialCurrentView('สมุดคะแนนรวม')" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div></div>
                     <div class="no-print glass-card bg-white rounded-2xl border p-4 mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3"><select id="gradebookLevel" onchange="updateRoomFilterForLevel('gradebook');renderGradebook()" class="p-2.5 rounded-xl border bg-white"><option value="all">ทุกระดับชั้น</option></select><select id="gradebookRoom" onchange="renderGradebook()" class="p-2.5 rounded-xl border bg-white"><option value="all">ทุกห้อง</option></select><input id="gradebookSearch" oninput="renderGradebook()" class="p-2.5 rounded-xl border" placeholder="ค้นหาชื่อหรือรหัส..."><label class="text-xs font-bold text-gray-500">น้ำหนักงาน (%)<input id="gradebookAssignmentWeight" type="number" min="0" max="100" onchange="syncGradebookWeights(this)" class="w-full p-2 border rounded mt-1" value="60"></label><label class="text-xs font-bold text-gray-500">น้ำหนักข้อสอบ (%)<input id="gradebookQuizWeight" type="number" min="0" max="100" onchange="syncGradebookWeights(this)" class="w-full p-2 border rounded mt-1" value="40"></label><button onclick="saveGradebookWeights()" class="self-end p-2.5 rounded-xl bg-purple-600 text-white font-bold">บันทึกสัดส่วน</button></div>
                     <div class="print-only text-center mb-5"><h1 id="gradebookPrintSchool" class="font-bold text-xl"></h1><p>สมุดคะแนนรวม ภาคเรียนที่ <span id="gradebookPrintTerm"></span></p></div>
                     <div class="glass-card bg-white rounded-2xl border overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm print-table"><thead class="bg-gray-100"><tr><th class="p-3 text-left">นักเรียน</th><th class="p-3 text-center">ห้อง</th><th class="p-3 text-center">งาน</th><th class="p-3 text-center">ข้อสอบ</th><th class="p-3 text-center">คะแนนรวม</th><th class="p-3 text-center">ระดับผล</th><th class="p-3 text-center">งานค้าง</th><th class="p-3 text-center">ข้อสอบยังไม่ทำ</th><th class="p-3 text-center">พฤติกรรม</th></tr></thead><tbody id="gradebookBody" class="divide-y"></tbody></table></div></div>
@@ -1151,7 +1152,7 @@
 
                 <!-- ================= VIEW: INDIVIDUAL STUDENT REPORT ================= -->
                 <section id="view-student-report" class="view-section max-w-5xl mx-auto pb-12">
-                    <div class="no-print flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-user-graduate text-purple-600 mr-2"></i>รายงานรายบุคคล</h2><p class="text-sm text-gray-500 mt-1">สรุปการเข้าเรียน งาน แบบทดสอบ และพฤติกรรม</p></div><div class="flex gap-2"><button onclick="exportIndividualReportCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm"><i class="fas fa-file-csv mr-2"></i>Export CSV</button><button onclick="window.print()" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div></div>
+                    <div class="no-print flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-user-graduate text-purple-600 mr-2"></i>รายงานรายบุคคล</h2><p class="text-sm text-gray-500 mt-1">สรุปการเข้าเรียน งาน แบบทดสอบ และพฤติกรรม</p></div><div class="flex gap-2"><button onclick="exportIndividualReportCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm"><i class="fas fa-file-csv mr-2"></i>Export CSV</button><button onclick="printOfficialCurrentView('รายงานรายบุคคล')" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div></div>
                     <div class="no-print glass-card bg-white rounded-2xl border p-4 mb-5 grid grid-cols-1 sm:grid-cols-3 gap-3"><select id="studentReportLevel" onchange="updateRoomFilterForLevel('studentReport');initIndividualReport()" class="p-2.5 rounded-xl border bg-white"><option value="all">ทุกระดับชั้น</option></select><select id="studentReportRoom" onchange="updateStudentReportNames()" class="p-2.5 rounded-xl border bg-white"><option value="">เลือกห้อง</option></select><select id="studentReportCode" onchange="renderIndividualReport()" class="p-2.5 rounded-xl border bg-white" disabled><option value="">เลือกนักเรียน</option></select></div>
                     <div id="studentReportPaper" class="bg-white rounded-xl border p-6 sm:p-10 min-h-[260mm]"><div id="studentReportEmpty" class="text-center py-24 text-gray-400"><i class="fas fa-user-circle text-5xl mb-3"></i><p>เลือกห้องและนักเรียนเพื่อสร้างรายงาน</p></div><div id="studentReportContent" class="hidden"></div></div>
                 </section>
@@ -1170,7 +1171,7 @@
                             <h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-print text-purple-600 mr-2"></i> ออกรายงานสรุปผล</h2>
                             <div class="mt-3 flex gap-2"><select id="reportRoomSelect" onchange="renderReport()" class="px-3 py-1.5 border rounded-lg text-sm bg-white"><option value="all">ทุกห้อง</option></select></div>
                         </div>
-                        <button onclick="window.print()" class="px-5 py-2.5 bg-gray-800 hover:bg-gray-900 text-white rounded-xl text-sm font-bold shadow flex items-center transition-colors"><i class="fas fa-file-pdf mr-2"></i> พิมพ์ / PDF</button>
+                        <button onclick="printOfficialCurrentView('รายงานการเข้าเรียน')" class="px-5 py-2.5 bg-gray-800 hover:bg-gray-900 text-white rounded-xl text-sm font-bold shadow flex items-center transition-colors"><i class="fas fa-file-pdf mr-2"></i> พิมพ์ / PDF</button>
                     </div>
                     <div class="bg-white p-8 sm:p-12 rounded-xl shadow-md border border-gray-200 print-paper overflow-x-auto mb-12" style="min-height: 297mm; max-width: 210mm; margin: 0 auto;">
                         <div class="text-center mb-8">
@@ -2667,6 +2668,7 @@
                         </div>
                         <label class="block text-xs font-bold text-gray-500 mb-1">ข้อเสนอแนะ</label>
                         <textarea id="swGradeComment" class="w-full px-3 py-2 border rounded-lg text-sm h-20 focus:border-purple-500 resize-none">${profileEsc(sub.comment||'')}</textarea>
+                        <label class="mt-3 flex items-center gap-2 rounded-lg border border-indigo-100 bg-indigo-50 px-3 py-2 text-sm font-bold text-indigo-700"><input id="swGradeNext" type="checkbox" checked class="w-4 h-4"> บันทึกแล้วเปิดงานรอตรวจคนถัดไป</label>
                     </div>
                 `,
                 showCancelButton: true, confirmButtonText: 'บันทึก', confirmButtonColor: '#7c3aed',
@@ -2676,7 +2678,7 @@
                     if(!Number.isFinite(score)||!Number.isFinite(maxScore)||score<0||maxScore<1||score>maxScore) {
                         return Swal.showValidationMessage('คะแนนไม่ถูกต้อง');
                     }
-                    return { status: document.getElementById('swGradeStatus').value, score, maxScore, comment: document.getElementById('swGradeComment').value.trim() };
+                    return { status: document.getElementById('swGradeStatus').value, score, maxScore, comment: document.getElementById('swGradeComment').value.trim(), openNext: document.getElementById('swGradeNext').checked };
                 }
             }).then(async r => {
                 if(r.isConfirmed) { 
@@ -2696,7 +2698,9 @@
                         if(document.getElementById('view-summary').classList.contains('active')) renderSummaryTable();
                         else if(document.getElementById('view-all-uploads').classList.contains('active')) renderAllUploads();
                         else if(document.getElementById('view-student-profile').classList.contains('active')) renderStudentAssignments();
-                        Swal.fire({toast:true, position:'top-end', icon:'success', title:'บันทึกผลตรวจแล้ว', showConfirmButton:false, timer:1200});
+                        const next=r.value.openNext?ahSubmissions.find(item=>item.id!==sub.id&&item.status==='pending'):null;
+                        if(next){Swal.fire({toast:true, position:'top-end', icon:'success', title:'บันทึกแล้ว · กำลังเปิดงานถัดไป', showConfirmButton:false, timer:700});setTimeout(()=>ahGradeWork(next.id),760);}
+                        else Swal.fire({toast:true, position:'top-end', icon:'success', title:r.value.openNext?'บันทึกแล้ว · ตรวจครบแล้ว':'บันทึกผลตรวจแล้ว', showConfirmButton:false, timer:1200});
                     } catch(error) { Swal.fire('บันทึกผลตรวจไม่สำเร็จ',error.message||String(error),'error'); }
                 }
             });
@@ -3081,6 +3085,27 @@
         }
 
         function escapeAttendanceHtml(value){return String(value==null?'':value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
+        function officialPrintStyles(landscape){
+            return `@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap');
+            @page{size:A4 ${landscape?'landscape':'portrait'};margin:${landscape?'15mm':'20mm 20mm 20mm 25mm'}}
+            *{box-sizing:border-box}html,body{margin:0;color:#000;background:#fff;font-family:"TH Sarabun New","TH SarabunPSK","TH Sarabun PSK","Sarabun",sans-serif;font-size:16pt;line-height:1.15}
+            h1{font-size:20pt;line-height:1.1;margin:0;font-weight:700}h2{font-size:18pt;margin:1mm 0;font-weight:700}p{margin:1mm 0}
+            .document-head{text-align:center;margin-bottom:6mm}.document-meta{text-align:center;margin-bottom:5mm}.summary-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3mm;margin:4mm 0}
+            .summary-box{border:.5pt solid #000;padding:2.5mm;text-align:center}.summary-box strong{display:block;font-size:20pt}.detail-title{font-weight:700;margin-top:3mm}
+            table{width:100%;border-collapse:collapse;font-size:16pt}th,td{border:.5pt solid #000;padding:1.5mm 2mm;vertical-align:top}th{text-align:center;font-weight:700}
+            .footer{margin-top:8mm;text-align:right;font-size:14pt}.signature{margin-top:18mm;display:grid;grid-template-columns:1fr 1fr;gap:25mm;text-align:center}
+            @media print{.no-print{display:none!important}thead{display:table-header-group}tr{break-inside:avoid}a{color:#000;text-decoration:none}}`;
+        }
+        function openOfficialPrintDocument(title,bodyHtml,options){
+            options=options||{};const w=window.open('','_blank');if(!w){Swal.fire('เปิดหน้าพิมพ์ไม่ได้','กรุณาอนุญาต Pop-up ของเว็บไซต์','warning');return null;}
+            const safeTitle=escapeAttendanceHtml(title||'เอกสาร');
+            w.document.open();w.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle}</title><style>${officialPrintStyles(!!options.landscape)}</style></head><body>${bodyHtml}<script>window.addEventListener('load',function(){setTimeout(function(){window.print()},350)})<\/script></body></html>`);w.document.close();return w;
+        }
+        function printOfficialCurrentView(title){
+            const oldTitle=document.title;document.title=(title||'รายงาน')+' - '+(schoolSettings.schoolName||'');
+            const printedAt=document.querySelector('.active .print-generated-at');if(printedAt)printedAt.textContent='พิมพ์เมื่อ '+new Date().toLocaleString('th-TH');
+            const restore=()=>{document.title=oldTitle;window.removeEventListener('afterprint',restore);};window.addEventListener('afterprint',restore);window.print();
+        }
         function openAttendanceSummary(key){
             const rec=attendanceHistory[key]; if(!rec)return Swal.fire('ไม่พบข้อมูล','ไม่พบรายการเช็กชื่อนี้','error');
             const p=key.split('_'),date=p[0],period=p.length>=4?p[1]:'-',subject=p.length>=4?p[2]:p[1],room=p.length>=4?p[3]:p[2],groups={ma:[],khad:[],lap:[],lak:[],sai:[]};
@@ -3090,10 +3115,16 @@
             const cards=card('มาเรียน',groups.ma.length,'bg-emerald-50 text-emerald-700')+card('ขาด',groups.khad.length,'bg-red-50 text-red-700')+card('ป่วย',groups.lap.length,'bg-blue-50 text-blue-700')+card('กิจ',groups.lak.length,'bg-purple-50 text-purple-700')+card('สาย',groups.sai.length,'bg-amber-50 text-amber-700');
             const list=(s,label,color)=>groups[s].length?`<div class="mb-3"><div class="font-bold text-sm mb-1 ${color}">${label} (${groups[s].length} คน)</div><div class="grid grid-cols-1 sm:grid-cols-2 gap-1">${groups[s].map((name,i)=>`<div class="text-sm bg-gray-50 border rounded-lg px-3 py-2">${i+1}. ${escapeAttendanceHtml(name)}</div>`).join('')}</div></div>`:'';
             const detail=list('khad','ขาดเรียน','text-red-600')+list('lap','ลาป่วย','text-blue-600')+list('lak','ลากิจ','text-purple-600')+list('sai','มาสาย','text-amber-600');
-            const html=`<div id="attendanceSummaryCapture" class="bg-white p-5 text-left"><div class="text-center border-b pb-4 mb-4"><h2 class="text-xl font-bold">สรุปการเช็กชื่อรายคาบ</h2><p class="text-sm text-gray-500">${escapeAttendanceHtml(schoolSettings.schoolName||'')}</p><p class="text-sm mt-2"><b>${escapeAttendanceHtml(subject)}</b> · คาบ ${escapeAttendanceHtml(period)} · ห้อง ${escapeAttendanceHtml(room)} · ${escapeAttendanceHtml(date)}</p></div><div class="grid grid-cols-5 gap-2 mb-4">${cards}</div><div class="bg-gray-50 border rounded-xl p-3 mb-4 text-sm"><b>เช็กชื่อทั้งหมด ${total} คน</b> · ไม่มาเรียน ${absent} คน · มาสาย ${groups.sai.length} คน</div>${detail||'<div class="text-center py-5 text-emerald-600 font-bold">มาเรียนครบทุกคน</div>'}<div class="text-[10px] text-gray-400 text-right mt-5">${new Date().toLocaleString('th-TH')}</div></div>`;
-            Swal.fire({width:850,html,showCancelButton:true,confirmButtonText:'บันทึกเป็นรูปภาพ',cancelButtonText:'ปิด',confirmButtonColor:'#7c3aed',preConfirm:()=>saveAttendanceSummaryImage(key)});
+            const html=`<div id="attendanceSummaryDocument" class="bg-white p-5 text-left"><div class="text-center border-b pb-4 mb-4"><h2 class="text-xl font-bold">สรุปการเช็กชื่อรายคาบ</h2><p class="text-sm text-gray-500">${escapeAttendanceHtml(schoolSettings.schoolName||'')}</p><p class="text-sm mt-2"><b>${escapeAttendanceHtml(subject)}</b> · คาบ ${escapeAttendanceHtml(period)} · ห้อง ${escapeAttendanceHtml(room)} · ${escapeAttendanceHtml(date)}</p></div><div class="grid grid-cols-5 gap-2 mb-4">${cards}</div><div class="bg-gray-50 border rounded-xl p-3 mb-4 text-sm"><b>เช็กชื่อทั้งหมด ${total} คน</b> · ไม่มาเรียน ${absent} คน · มาสาย ${groups.sai.length} คน</div>${detail||'<div class="text-center py-5 text-emerald-600 font-bold">มาเรียนครบทุกคน</div>'}<div class="text-[10px] text-gray-400 text-right mt-5">${new Date().toLocaleString('th-TH')}</div></div>`;
+            Swal.fire({width:850,html,showCancelButton:true,confirmButtonText:'พิมพ์ / บันทึก PDF',cancelButtonText:'ปิด',confirmButtonColor:'#7c3aed'}).then(result=>{if(result.isConfirmed)printAttendanceSummaryDocument(key);});
         }
-        async function saveAttendanceSummaryImage(key){if(typeof html2canvas!=='function'){Swal.showValidationMessage('โหลดเครื่องมือสร้างรูปภาพไม่สำเร็จ');return false;}try{const canvas=await html2canvas(document.getElementById('attendanceSummaryCapture'),{scale:2,backgroundColor:'#fff',useCORS:true});const a=document.createElement('a');a.download=`attendance-summary-${key.replace(/[^a-zA-Z0-9ก-๙_-]/g,'-')}.png`;a.href=canvas.toDataURL('image/png');a.click();return true;}catch(e){Swal.showValidationMessage('บันทึกรูปภาพไม่สำเร็จ: '+e.message);return false;}}
+        function printAttendanceSummaryDocument(key){
+            const rec=attendanceHistory[key];if(!rec)return;const p=key.split('_'),date=p[0],period=p.length>=4?p[1]:'-',subject=p.length>=4?p[2]:p[1],room=p.length>=4?p[3]:p[2],labels={ma:'มาเรียน',khad:'ขาดเรียน',lap:'ลาป่วย',lak:'ลากิจ',sai:'มาสาย'},groups={ma:[],khad:[],lap:[],lak:[],sai:[]};
+            Object.entries(rec).forEach(([id,data])=>{const status=typeof data==='string'?data:data.status,st=students.find(s=>String(s.id)===String(id)),name=st?`${st.prefix||''}${st.fname||''} ${st.lname||''}`.trim():`รหัส ${id}`;if(groups[status])groups[status].push(name);});
+            const rows=Object.keys(labels).filter(k=>k!=='ma'&&groups[k].length).map(k=>groups[k].map((name,i)=>`<tr><td style="width:15mm;text-align:center">${i+1}</td><td>${escapeAttendanceHtml(name)}</td><td style="width:35mm;text-align:center">${labels[k]}</td></tr>`).join('')).join('');
+            const total=Object.values(groups).reduce((n,a)=>n+a.length,0);const body=`<header class="document-head"><h1>${escapeAttendanceHtml(schoolSettings.schoolName||'โรงเรียน')}</h1><h2>รายงานสรุปการเช็กชื่อรายคาบ</h2></header><div class="document-meta">วิชา <strong>${escapeAttendanceHtml(subject)}</strong> &nbsp; คาบ ${escapeAttendanceHtml(period)} &nbsp; ชั้น/ห้อง ${escapeAttendanceHtml(room)} &nbsp; วันที่ ${escapeAttendanceHtml(date)}</div><div class="summary-grid">${Object.keys(labels).map(k=>`<div class="summary-box">${labels[k]}<strong>${groups[k].length}</strong>คน</div>`).join('')}</div><p><strong>จำนวนนักเรียนที่บันทึกทั้งหมด ${total} คน</strong></p><table><thead><tr><th>ลำดับ</th><th>ชื่อ–นามสกุล</th><th>สถานะ</th></tr></thead><tbody>${rows||'<tr><td colspan="3" style="text-align:center">มาเรียนครบทุกคน</td></tr>'}</tbody></table><div class="signature"><div>ลงชื่อ ................................................ ผู้สอน<br>(................................................)</div><div>ลงชื่อ ................................................ ผู้รับรอง<br>(................................................)</div></div><div class="footer">พิมพ์เมื่อ ${escapeAttendanceHtml(new Date().toLocaleString('th-TH'))}</div>`;
+            openOfficialPrintDocument('สรุปเช็กชื่อ '+room+' '+date,body);
+        }
 
         function editAttendanceRecord(key) {
             const parts = key.split('_');
@@ -4371,7 +4402,7 @@ async function printStudentQRCards(){
     var printWindow=window.open('','_blank');if(!printWindow)return Swal.fire('เปิดหน้าพิมพ์ไม่ได้','กรุณาอนุญาต Pop-up ของเว็บไซต์','warning');
     var temp=document.createElement('div');temp.style.cssText='position:fixed;left:-10000px;top:0';document.body.appendChild(temp);var cards=[];
     list.forEach(function(student,index){var holder=document.createElement('div');temp.appendChild(holder);new QRCode(holder,{text:buildStudentQRValue(student),width:150,height:150,correctLevel:QRCode.CorrectLevel.H});var canvas=holder.querySelector('canvas'),img=holder.querySelector('img'),src=canvas?canvas.toDataURL('image/png'):(img?img.src:'');var name=(student.prefix||'')+(student.fname||'')+' '+(student.lname||'');cards.push('<div class="card"><img src="'+src+'"><b>'+profileEsc(name)+'</b><span>รหัส '+profileEsc(student.code)+' · ห้อง '+profileEsc(student.room)+'</span><small>'+profileEsc(schoolSettings.schoolName||'')+' · '+profileEsc(schoolSettings.term)+'/'+profileEsc(schoolSettings.year)+'</small></div>');});temp.remove();
-    printWindow.document.write('<!doctype html><html lang="th"><head><meta charset="utf-8"><title>QR นักเรียน ห้อง '+profileEsc(room)+'</title><style>@page{size:A4;margin:10mm}body{font-family:Arial,sans-serif;margin:0}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7mm}.card{border:1px dashed #999;border-radius:10px;padding:8px;text-align:center;break-inside:avoid;display:flex;flex-direction:column;align-items:center}.card img{width:36mm;height:36mm}.card b{font-size:12px;margin-top:4px}.card span,.card small{font-size:10px;margin-top:2px;color:#555}.head{text-align:center;margin-bottom:8mm}.head h1{font-size:18px;margin:0}.head p{font-size:12px;margin:3px}</style></head><body><div class="head"><h1>QR เช็กชื่อนักเรียน</h1><p>ห้อง '+profileEsc(room)+' · ภาคเรียน '+profileEsc(schoolSettings.term)+'/'+profileEsc(schoolSettings.year)+'</p></div><div class="grid">'+cards.join('')+'</div><script>window.onload=function(){window.print()}<\/script></body></html>');printWindow.document.close();
+    printWindow.document.write('<!doctype html><html lang="th"><head><meta charset="utf-8"><title>QR นักเรียน ห้อง '+profileEsc(room)+'</title><style>@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap");@page{size:A4;margin:15mm}*{box-sizing:border-box}body{font-family:"TH Sarabun New","TH SarabunPSK","TH Sarabun PSK","Sarabun",sans-serif;margin:0;color:#000}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7mm}.card{border:.5pt dashed #555;padding:3mm;text-align:center;break-inside:avoid;display:flex;flex-direction:column;align-items:center}.card img{width:34mm;height:34mm}.card b{font-size:16pt;line-height:1.05;margin-top:2mm}.card span{font-size:14pt;line-height:1.05;margin-top:1mm}.card small{font-size:12pt;line-height:1.05;margin-top:1mm}.head{text-align:center;margin-bottom:7mm}.head h1{font-size:20pt;line-height:1.1;margin:0}.head p{font-size:16pt;margin:1mm}</style></head><body><div class="head"><h1>'+profileEsc(schoolSettings.schoolName||'โรงเรียน')+'</h1><p>บัตร QR นักเรียน · ห้อง '+profileEsc(room)+' · ภาคเรียน '+profileEsc(schoolSettings.term)+'/'+profileEsc(schoolSettings.year)+'</p></div><div class="grid">'+cards.join('')+'</div><script>window.addEventListener("load",function(){setTimeout(function(){window.print()},350)})<\/script></body></html>');printWindow.document.close();
 }
 </script>
 <script>
