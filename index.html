@@ -794,7 +794,7 @@
                             <button onclick="ahOpenAddCategoryModal()" class="teacher-only px-4 py-2 bg-indigo-100 text-indigo-700 rounded-xl font-bold hover:bg-indigo-200 transition text-sm flex items-center">
                                 <i class="fas fa-tasks mr-1.5"></i> มอบหมายงาน
                             </button>
-                            <button onclick="printOfficialCurrentView('รายงานสรุปการส่งงาน')" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold shadow hover:bg-gray-900 transition text-sm flex items-center">
+                            <button onclick="printSummaryReport()" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold shadow hover:bg-gray-900 transition text-sm flex items-center">
                                 <i class="fas fa-print mr-1.5"></i> พิมพ์ / PDF
                             </button>
                         </div>
@@ -1128,7 +1128,7 @@
 
                 <!-- ================= VIEW: QUIZ RESULTS (TEACHER ONLY) ================= -->
                 <section id="view-quiz-results" class="view-section max-w-7xl mx-auto pb-12">
-                    <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-clipboard-check text-purple-600 mr-2"></i>ผลการสอบนักเรียนทั้งหมด</h2><p class="text-sm text-gray-500 mt-1">แสดงคะแนนล่าสุด คะแนนสูงสุด และจำนวนครั้งที่ทำ แยกตามนักเรียนและบทเรียน</p></div><button onclick="exportQuizResultsCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm self-start"><i class="fas fa-file-csv mr-2"></i>Export CSV</button></div>
+                    <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-clipboard-check text-purple-600 mr-2"></i>ผลการสอบนักเรียนทั้งหมด</h2><p class="text-sm text-gray-500 mt-1">แสดงคะแนนล่าสุด คะแนนสูงสุด และจำนวนครั้งที่ทำ แยกตามนักเรียนและบทเรียน</p></div><div class="flex gap-2"><button onclick="exportQuizResultsCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm self-start"><i class="fas fa-file-csv mr-2"></i>Export CSV</button><button onclick="printQuizResultsReport()" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm self-start"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div></div>
                     <div class="glass-card bg-white rounded-2xl border p-4 mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
                         <input id="quizResultSearch" oninput="renderQuizResults()" class="px-3 py-2.5 rounded-xl border" placeholder="ค้นหาชื่อหรือรหัส...">
                         <select id="quizResultLevel" onchange="updateRoomFilterForLevel('quizResult');renderQuizResults()" class="px-3 py-2.5 rounded-xl border bg-white"><option value="all">ทุกระดับชั้น</option></select>
@@ -1144,7 +1144,7 @@
 
                 <!-- ================= VIEW: GRADEBOOK ================= -->
                 <section id="view-gradebook" class="view-section max-w-7xl mx-auto pb-12">
-                    <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-table-list text-purple-600 mr-2"></i>สมุดคะแนนรวม</h2><p class="text-sm text-gray-500 mt-1">รวมคะแนนงานและแบบทดสอบของนักเรียนทุกคน</p></div><div class="no-print flex gap-2"><button onclick="exportGradebookCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm"><i class="fas fa-file-csv mr-2"></i>Export CSV</button><button onclick="printOfficialCurrentView('สมุดคะแนนรวม')" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div></div>
+                    <div class="flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-table-list text-purple-600 mr-2"></i>สมุดคะแนนรวม</h2><p class="text-sm text-gray-500 mt-1">รวมคะแนนงานและแบบทดสอบของนักเรียนทุกคน</p></div><div class="no-print flex gap-2"><button onclick="exportGradebookCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm"><i class="fas fa-file-csv mr-2"></i>Export CSV</button><button onclick="printGradebookReport()" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div></div>
                     <div class="no-print glass-card bg-white rounded-2xl border p-4 mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3"><select id="gradebookLevel" onchange="updateRoomFilterForLevel('gradebook');renderGradebook()" class="p-2.5 rounded-xl border bg-white"><option value="all">ทุกระดับชั้น</option></select><select id="gradebookRoom" onchange="renderGradebook()" class="p-2.5 rounded-xl border bg-white"><option value="all">ทุกห้อง</option></select><input id="gradebookSearch" oninput="renderGradebook()" class="p-2.5 rounded-xl border" placeholder="ค้นหาชื่อหรือรหัส..."><label class="text-xs font-bold text-gray-500">น้ำหนักงาน (%)<input id="gradebookAssignmentWeight" type="number" min="0" max="100" onchange="syncGradebookWeights(this)" class="w-full p-2 border rounded mt-1" value="60"></label><label class="text-xs font-bold text-gray-500">น้ำหนักข้อสอบ (%)<input id="gradebookQuizWeight" type="number" min="0" max="100" onchange="syncGradebookWeights(this)" class="w-full p-2 border rounded mt-1" value="40"></label><button onclick="saveGradebookWeights()" class="self-end p-2.5 rounded-xl bg-purple-600 text-white font-bold">บันทึกสัดส่วน</button></div>
                     <div class="print-only text-center mb-5"><h1 id="gradebookPrintSchool" class="font-bold text-xl"></h1><p>สมุดคะแนนรวม ภาคเรียนที่ <span id="gradebookPrintTerm"></span></p></div>
                     <div class="glass-card bg-white rounded-2xl border overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm print-table"><thead class="bg-gray-100"><tr><th class="p-3 text-left">นักเรียน</th><th class="p-3 text-center">ห้อง</th><th class="p-3 text-center">งาน</th><th class="p-3 text-center">ข้อสอบ</th><th class="p-3 text-center">คะแนนรวม</th><th class="p-3 text-center">ระดับผล</th><th class="p-3 text-center">งานค้าง</th><th class="p-3 text-center">ข้อสอบยังไม่ทำ</th><th class="p-3 text-center">พฤติกรรม</th></tr></thead><tbody id="gradebookBody" class="divide-y"></tbody></table></div></div>
@@ -1152,13 +1152,13 @@
 
                 <!-- ================= VIEW: INDIVIDUAL STUDENT REPORT ================= -->
                 <section id="view-student-report" class="view-section max-w-5xl mx-auto pb-12">
-                    <div class="no-print flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-user-graduate text-purple-600 mr-2"></i>รายงานรายบุคคล</h2><p class="text-sm text-gray-500 mt-1">สรุปการเข้าเรียน งาน แบบทดสอบ และพฤติกรรม</p></div><div class="flex gap-2"><button onclick="exportIndividualReportCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm"><i class="fas fa-file-csv mr-2"></i>Export CSV</button><button onclick="printOfficialCurrentView('รายงานรายบุคคล')" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div></div>
+                    <div class="no-print flex flex-col sm:flex-row justify-between gap-4 mb-6"><div><h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-user-graduate text-purple-600 mr-2"></i>รายงานรายบุคคล</h2><p class="text-sm text-gray-500 mt-1">สรุปการเข้าเรียน งาน แบบทดสอบ และพฤติกรรม</p></div><div class="flex gap-2"><button onclick="exportIndividualReportCSV()" class="px-4 py-2 bg-emerald-600 text-white rounded-xl font-bold text-sm"><i class="fas fa-file-csv mr-2"></i>Export CSV</button><button onclick="printIndividualStudentReport()" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div></div>
                     <div class="no-print glass-card bg-white rounded-2xl border p-4 mb-5 grid grid-cols-1 sm:grid-cols-3 gap-3"><select id="studentReportLevel" onchange="updateRoomFilterForLevel('studentReport');initIndividualReport()" class="p-2.5 rounded-xl border bg-white"><option value="all">ทุกระดับชั้น</option></select><select id="studentReportRoom" onchange="updateStudentReportNames()" class="p-2.5 rounded-xl border bg-white"><option value="">เลือกห้อง</option></select><select id="studentReportCode" onchange="renderIndividualReport()" class="p-2.5 rounded-xl border bg-white" disabled><option value="">เลือกนักเรียน</option></select></div>
                     <div id="studentReportPaper" class="bg-white rounded-xl border p-6 sm:p-10 min-h-[260mm]"><div id="studentReportEmpty" class="text-center py-24 text-gray-400"><i class="fas fa-user-circle text-5xl mb-3"></i><p>เลือกห้องและนักเรียนเพื่อสร้างรายงาน</p></div><div id="studentReportContent" class="hidden"></div></div>
                 </section>
 
                 <section id="view-student-data" class="view-section max-w-7xl mx-auto pb-12">
-                    <div class="mb-6"><h2 class="text-2xl font-bold text-slate-800"><i class="fas fa-address-book text-purple-600 mr-2"></i>ข้อมูลแนะนำตัวนักเรียน</h2><p class="text-sm text-slate-500 mt-1">พื้นที่สำหรับครู ตรวจสอบข้อมูลส่วนตัวและวิเคราะห์ข้อมูลตามห้องเรียนและที่อยู่</p></div>
+                    <div class="mb-6 flex flex-col sm:flex-row sm:items-start justify-between gap-3"><div><h2 class="text-2xl font-bold text-slate-800"><i class="fas fa-address-book text-purple-600 mr-2"></i>ข้อมูลแนะนำตัวนักเรียน</h2><p class="text-sm text-slate-500 mt-1">พื้นที่สำหรับครู ตรวจสอบข้อมูลส่วนตัวและวิเคราะห์ข้อมูลตามห้องเรียนและที่อยู่</p></div><button onclick="printStudentDataReport()" class="px-4 py-2 bg-gray-800 text-white rounded-xl font-bold text-sm self-start"><i class="fas fa-print mr-2"></i>พิมพ์ / PDF</button></div>
                     <div id="studentDataStats" class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5"></div>
                     <div class="glass-card p-4 mb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3"><input id="studentDataSearch" oninput="renderStudentDataAdmin()" class="p-2.5 border rounded-xl" placeholder="ค้นหาชื่อ รหัส ชื่อเล่น..."><select id="studentDataLevel" onchange="renderStudentDataAdmin()" class="p-2.5 border rounded-xl bg-white"><option value="all">ทุกระดับชั้น</option></select><select id="studentDataRoom" onchange="renderStudentDataAdmin()" class="p-2.5 border rounded-xl bg-white"><option value="all">ทุกห้อง</option></select><select id="studentDataProvince" onchange="renderStudentDataAdmin()" class="p-2.5 border rounded-xl bg-white"><option value="all">ทุกจังหวัด</option></select><select id="studentDataDistrict" onchange="renderStudentDataAdmin()" class="p-2.5 border rounded-xl bg-white"><option value="all">ทุกอำเภอ</option></select></div>
                     <div class="glass-card overflow-hidden"><div class="overflow-x-auto"><table class="w-full text-sm min-w-[1100px]"><thead class="bg-slate-100"><tr><th class="p-3 text-left">นักเรียน</th><th class="p-3">ชื่อเล่น</th><th class="p-3">ชั้น/ห้อง</th><th class="p-3 text-left">ที่อยู่</th><th class="p-3">โทรศัพท์</th><th class="p-3">Instagram</th><th class="p-3 text-left">ความสนใจ/ความสามารถ</th><th class="p-3">แก้ไขล่าสุด</th></tr></thead><tbody id="studentDataBody" class="divide-y"></tbody></table></div></div>
@@ -1169,9 +1169,9 @@
                     <div class="flex justify-between items-end mb-6 no-print">
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800"><i class="fas fa-print text-purple-600 mr-2"></i> ออกรายงานสรุปผล</h2>
-                            <div class="mt-3 flex gap-2"><select id="reportRoomSelect" onchange="renderReport()" class="px-3 py-1.5 border rounded-lg text-sm bg-white"><option value="all">ทุกห้อง</option></select></div>
+                            <div class="mt-3 flex flex-wrap gap-2"><select id="reportLevel" onchange="updateRoomFilterForLevel('report');renderReport()" class="px-3 py-1.5 border rounded-lg text-sm bg-white"><option value="all">ทุกระดับชั้น</option></select><select id="reportRoom" onchange="renderReport()" class="px-3 py-1.5 border rounded-lg text-sm bg-white"><option value="all">ทุกห้อง</option></select></div>
                         </div>
-                        <button onclick="printOfficialCurrentView('รายงานการเข้าเรียน')" class="px-5 py-2.5 bg-gray-800 hover:bg-gray-900 text-white rounded-xl text-sm font-bold shadow flex items-center transition-colors"><i class="fas fa-file-pdf mr-2"></i> พิมพ์ / PDF</button>
+                        <button onclick="printAttendanceBehaviorReport()" class="px-5 py-2.5 bg-gray-800 hover:bg-gray-900 text-white rounded-xl text-sm font-bold shadow flex items-center transition-colors"><i class="fas fa-file-pdf mr-2"></i> พิมพ์ / PDF</button>
                     </div>
                     <div class="bg-white p-8 sm:p-12 rounded-xl shadow-md border border-gray-200 print-paper overflow-x-auto mb-12" style="min-height: 297mm; max-width: 210mm; margin: 0 auto;">
                         <div class="text-center mb-8">
@@ -1470,8 +1470,8 @@
             document.getElementById('hmClass').innerHTML = classHtml;
             document.getElementById('rosterRoomFilter').innerHTML = '<option value="all">ทุกห้องเรียน</option>' + classrooms.map(c => `<option value="${c}">${c}</option>`).join('');
             document.getElementById('summaryRoomFilter').innerHTML = '<option value="all">ทุกห้องเรียน</option>' + classrooms.map(c => `<option value="${c}">${c}</option>`).join('');
-            ['rosterLevelFilter','summaryLevelFilter','allUploadsLevel','quizResultLevel','studentReportLevel'].forEach(function(id){var el=document.getElementById(id);if(el){var current=el.value;el.innerHTML=levelOptionsHtml();el.value=Array.from(el.options).some(function(o){return o.value===current;})?current:'all';}});
-            document.getElementById('reportRoomSelect').innerHTML = '<option value="all">ทุกห้อง</option>' + classrooms.map(c => `<option value="${c}">${c}</option>`).join('');
+            ['rosterLevelFilter','summaryLevelFilter','allUploadsLevel','quizResultLevel','studentReportLevel','reportLevel'].forEach(function(id){var el=document.getElementById(id);if(el){var current=el.value;el.innerHTML=levelOptionsHtml();el.value=Array.from(el.options).some(function(o){return o.value===current;})?current:'all';}});
+            updateRoomFilterForLevel('report');
             
             const setRoomFilter = document.getElementById('settingsRoomFilter');
             if(setRoomFilter) setRoomFilter.innerHTML = '<option value="all">ทุกห้อง</option>' + classrooms.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -3093,18 +3093,60 @@
             .document-head{text-align:center;margin-bottom:6mm}.document-meta{text-align:center;margin-bottom:5mm}.summary-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:3mm;margin:4mm 0}
             .summary-box{border:.5pt solid #000;padding:2.5mm;text-align:center}.summary-box strong{display:block;font-size:20pt}.detail-title{font-weight:700;margin-top:3mm}
             table{width:100%;border-collapse:collapse;font-size:16pt}th,td{border:.5pt solid #000;padding:1.5mm 2mm;vertical-align:top}th{text-align:center;font-weight:700}
+            .official-table{table-layout:fixed}.official-table th,.official-table td{overflow-wrap:normal;word-break:normal;white-space:normal}.official-table td{text-align:center}.official-table .name-cell,.official-table th.name-cell{text-align:left;width:58mm}
+            .official-table.compact{font-size:14pt;line-height:1.05}.official-table.compact th,.official-table.compact td{padding:1.1mm 1.3mm}
+            .report-section{margin-top:6mm}.report-section h3{font-size:17pt;margin:0 0 2mm}.report-note{font-size:14pt;text-align:right;margin-top:3mm}
+            .report-content .grid{display:grid;gap:3mm}.report-content .grid-cols-1{grid-template-columns:1fr}.report-content .grid-cols-2{grid-template-columns:repeat(2,1fr)}.report-content .grid-cols-3{grid-template-columns:repeat(3,1fr)}.report-content .grid-cols-4{grid-template-columns:repeat(4,1fr)}
+            .report-content [class*="border"]{border:.5pt solid #000!important}.report-content [class*="rounded"]{border-radius:0!important}.report-content [class*="text-center"]{text-align:center}.report-content [class*="font-bold"]{font-weight:700}.report-content [class*="mt-"]{margin-top:3mm}.report-content [class*="mb-"]{margin-bottom:2mm}.report-content small{font-size:14pt}.report-content img,.report-content button,.report-content .no-print{display:none!important}
             .footer{margin-top:8mm;text-align:right;font-size:14pt}.signature{margin-top:18mm;display:grid;grid-template-columns:1fr 1fr;gap:25mm;text-align:center}
             @media print{.no-print{display:none!important}thead{display:table-header-group}tr{break-inside:avoid}a{color:#000;text-decoration:none}}`;
         }
         function openOfficialPrintDocument(title,bodyHtml,options){
             options=options||{};const w=window.open('','_blank');if(!w){Swal.fire('เปิดหน้าพิมพ์ไม่ได้','กรุณาอนุญาต Pop-up ของเว็บไซต์','warning');return null;}
             const safeTitle=escapeAttendanceHtml(title||'เอกสาร');
-            w.document.open();w.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle}</title><style>${officialPrintStyles(!!options.landscape)}</style></head><body>${bodyHtml}<script>window.addEventListener('load',function(){setTimeout(function(){window.print()},350)})<\/script></body></html>`);w.document.close();return w;
+            w.document.open();w.document.write(`<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${safeTitle}</title><style>${officialPrintStyles(!!options.landscape)}</style></head><body>${bodyHtml}<script>window.addEventListener('load',function(){var ready=document.fonts&&document.fonts.ready?document.fonts.ready:Promise.resolve();ready.then(function(){setTimeout(function(){window.print()},150)})})<\/script></body></html>`);w.document.close();return w;
         }
-        function printOfficialCurrentView(title){
-            const oldTitle=document.title;document.title=(title||'รายงาน')+' - '+(schoolSettings.schoolName||'');
-            const printedAt=document.querySelector('.active .print-generated-at');if(printedAt)printedAt.textContent='พิมพ์เมื่อ '+new Date().toLocaleString('th-TH');
-            const restore=()=>{document.title=oldTitle;window.removeEventListener('afterprint',restore);};window.addEventListener('afterprint',restore);window.print();
+        function officialReportHeader(title,subtitle){
+            return `<header class="document-head"><h1>${escapeAttendanceHtml(schoolSettings.schoolName||'โรงเรียน')}</h1><h2>${escapeAttendanceHtml(title)}</h2>${subtitle?`<p>${escapeAttendanceHtml(subtitle)}</p>`:''}</header>`;
+        }
+        function cloneOfficialTable(selector,options){
+            options=options||{};const source=typeof selector==='string'?document.querySelector(selector):selector;if(!source)return'';const table=source.cloneNode(true);
+            table.removeAttribute('style');table.className='official-table'+(options.compact?' compact':'');
+            table.querySelectorAll('i,svg,img,.no-print').forEach(el=>el.remove());
+            table.querySelectorAll('button').forEach(button=>button.replaceWith(document.createTextNode(button.textContent.trim())));
+            table.querySelectorAll('[onclick],[style]').forEach(el=>{el.removeAttribute('onclick');el.removeAttribute('style');});
+            if(options.dropLastColumn)table.querySelectorAll('tr').forEach(row=>{if(row.lastElementChild)row.lastElementChild.remove();});
+            const nameColumn=Number(options.nameColumn||0);if(nameColumn>0)table.querySelectorAll('tr').forEach(row=>{const cell=row.children[nameColumn-1];if(cell)cell.classList.add('name-cell');});
+            return table.outerHTML;
+        }
+        function currentFilterLabel(levelId,roomId){
+            const level=document.getElementById(levelId),room=document.getElementById(roomId),parts=[];if(level&&level.value&&level.value!=='all')parts.push('ระดับชั้น '+level.options[level.selectedIndex].text.replace(/^ระดับชั้น\s*/,''));if(room&&room.value&&room.value!=='all')parts.push('ห้อง '+room.value);return parts.join(' · ')||'ทุกระดับชั้นและทุกห้องเรียน';
+        }
+        function officialPrintFooter(){return `<div class="report-note">พิมพ์เมื่อ ${escapeAttendanceHtml(new Date().toLocaleString('th-TH'))}</div>`;}
+        function printSummaryReport(){
+            const table=cloneOfficialTable('#view-summary table',{compact:true,nameColumn:1});if(!table)return Swal.fire('ยังไม่มีข้อมูลรายงาน','','info');
+            openOfficialPrintDocument('รายงานสรุปการส่งงาน',officialReportHeader('รายงานสรุปการส่งงาน',currentFilterLabel('summaryLevelFilter','summaryRoomFilter')+' · ภาคเรียน '+(schoolSettings.term||'')+'/'+(schoolSettings.year||''))+table+officialPrintFooter(),{landscape:true});
+        }
+        function printGradebookReport(){
+            const table=cloneOfficialTable('#view-gradebook table',{compact:true,nameColumn:1});if(!table)return Swal.fire('ยังไม่มีข้อมูลรายงาน','','info');
+            openOfficialPrintDocument('สมุดคะแนนรวม',officialReportHeader('สมุดคะแนนรวม',currentFilterLabel('gradebookLevel','gradebookRoom')+' · ภาคเรียน '+(schoolSettings.term||'')+'/'+(schoolSettings.year||''))+table+officialPrintFooter(),{landscape:true});
+        }
+        function printIndividualStudentReport(){
+            const source=document.getElementById('studentReportContent');if(!source||source.classList.contains('hidden')||!source.textContent.trim())return Swal.fire('กรุณาเลือกนักเรียนก่อน','','warning');const clone=source.cloneNode(true);clone.querySelectorAll('button,img,.no-print').forEach(el=>el.remove());
+            openOfficialPrintDocument('รายงานผลการเรียนรายบุคคล',`<main class="report-content">${clone.innerHTML}</main>${officialPrintFooter()}`);
+        }
+        function printAttendanceBehaviorReport(){
+            const table=cloneOfficialTable('#view-reports table',{compact:true,nameColumn:3});if(!table)return Swal.fire('ยังไม่มีข้อมูลรายงาน','','info');const room=(document.getElementById('reportRoom')||{}).value||'all';
+            const signature=`<div class="signature"><div>ลงชื่อ ................................................ ครูผู้สอน<br>(................................................)</div><div>ลงชื่อ ................................................ ผู้อำนวยการโรงเรียน<br>(................................................)</div></div>`;
+            openOfficialPrintDocument('รายงานสรุปผลการเข้าเรียนและพฤติกรรม',officialReportHeader('รายงานสรุปผลการเข้าเรียนและพฤติกรรม','ห้อง '+(room==='all'?'ทั้งหมด':room)+' · ภาคเรียน '+(schoolSettings.term||'')+'/'+(schoolSettings.year||''))+table+signature+officialPrintFooter(),{landscape:true});
+        }
+        function printQuizResultsReport(){
+            const tables=document.querySelectorAll('#view-quiz-results table');if(!tables.length)return Swal.fire('ยังไม่มีข้อมูลรายงาน','','info');const main=cloneOfficialTable(tables[0],{compact:true,nameColumn:1,dropLastColumn:true}),compare=tables[1]?cloneOfficialTable(tables[1],{compact:true,nameColumn:1}):'';
+            const body=officialReportHeader('รายงานผลการสอบ',currentFilterLabel('quizResultLevel','quizResultRoom')+' · ภาคเรียน '+(schoolSettings.term||'')+'/'+(schoolSettings.year||''))+`<section class="report-section"><h3>ผลการสอบนักเรียน</h3>${main}</section>`+(compare?`<section class="report-section"><h3>เปรียบเทียบก่อนเรียน–หลังเรียน</h3>${compare}</section>`:'')+officialPrintFooter();openOfficialPrintDocument('รายงานผลการสอบ',body,{landscape:true});
+        }
+        function printStudentDataReport(){
+            const table=cloneOfficialTable('#view-student-data table',{compact:true,nameColumn:1});if(!table)return Swal.fire('ยังไม่มีข้อมูลรายงาน','','info');
+            openOfficialPrintDocument('รายงานข้อมูลแนะนำตัวนักเรียน',officialReportHeader('รายงานข้อมูลแนะนำตัวนักเรียน',currentFilterLabel('studentDataLevel','studentDataRoom')+' · ภาคเรียน '+(schoolSettings.term||'')+'/'+(schoolSettings.year||''))+table+officialPrintFooter(),{landscape:true});
         }
         function openAttendanceSummary(key){
             const rec=attendanceHistory[key]; if(!rec)return Swal.fire('ไม่พบข้อมูล','ไม่พบรายการเช็กชื่อนี้','error');
@@ -3458,14 +3500,16 @@
         function renderReport() {
             document.getElementById('reportSchoolName').innerText = schoolSettings.schoolName; 
             document.getElementById('reportTermText').innerText = `${schoolSettings.term}/${schoolSettings.year}`;
-            const roomF = document.getElementById('reportRoomSelect').value; 
+            const roomF = document.getElementById('reportRoom').value;
+            const levelF = (document.getElementById('reportLevel')||{}).value || 'all';
             document.getElementById('reportRoomText').innerText = roomF==='all'?'ทั้งหมด':roomF;
             
-            let list = roomF==='all' ? students : students.filter(s => s.room === roomF);
+            const source = allStudents.length ? allStudents : students;
+            let list = source.filter(s => (levelF==='all'||studentLevel(s)===levelF) && (roomF==='all'||String(s.room)===String(roomF)));
             document.getElementById('reportTableBody').innerHTML = list.map((st, i) => {
                 let ma=0, khad=0, puay=0, kij=0, sai=0;
                 Object.values(attendanceHistory).forEach(rec => { 
-                    const data = rec[st.id]; 
+                    const data = rec[st.id] || rec[String(st.id)] || rec[st.code] || rec[String(st.code)]; 
                     if(data) { 
                         const v = data.status || data; 
                         if(v==='ma') ma++; else if(v==='khad') khad++; else if(v==='lap') puay++; else if(v==='lak') kij++; else if(v==='sai') sai++; 
@@ -3477,14 +3521,14 @@
                 <tr class="border-b">
                     <td class="p-2 border border-gray-300">${i+1}</td>
                     <td class="p-2 border border-gray-300">${st.code}</td>
-                    <td class="p-2 border border-gray-300 text-left">${st.prefix}${st.fname} ${st.lname}</td>
+                    <td class="p-2 border border-gray-300 text-left">${profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||''))}</td>
                     <td class="p-2 border border-gray-300">${ma}</td>
                     <td class="p-2 border border-gray-300">${khad}</td>
                     <td class="p-2 border border-gray-300">${puay}</td>
                     <td class="p-2 border border-gray-300">${kij}</td>
                     <td class="p-2 border border-gray-300">${sai}</td>
                     <td class="p-2 border border-gray-300 font-bold">${percent}</td>
-                    <td class="p-2 border border-gray-300 text-purple-600 font-bold">${st.score}</td>
+                    <td class="p-2 border border-gray-300 text-purple-600 font-bold">${Number(st.score)||0}</td>
                 </tr>`;
             }).join('');
         }
