@@ -134,8 +134,8 @@
             #view-summary table { min-width: 0 !important; table-layout: fixed !important; white-space: normal !important; font-size: 12pt !important; line-height: 1.05 !important; }
             #summaryTableHead th { font-size: 12pt !important; }
             #summaryTableHead th, #summaryTableBody td { padding: 1.1mm .8mm !important; min-width: 0 !important; height: auto !important; vertical-align: middle !important; word-break: break-word !important; }
-            #summaryTableHead th:first-child, #summaryTableBody td:first-child { width: 38mm !important; }
-            #summaryTableHead th:nth-child(2), #summaryTableBody td:nth-child(2) { width: 14mm !important; }
+            #summaryTableHead th:first-child, #summaryTableBody td:first-child { width: 12mm !important; }
+            #summaryTableHead th:nth-child(2), #summaryTableBody td:nth-child(2) { width: 38mm !important; }
             #summaryTableHead i, #summaryTableBody i { display: none !important; }
             #summaryTableBody div { gap: 0 !important; }
             #summaryTableBody span { font-size: 16pt !important; line-height: 1.05 !important; white-space: normal !important; }
@@ -743,7 +743,8 @@
                         <div class="text-center sm:text-left z-10">
                             <h2 class="text-2xl sm:text-3xl font-bold" id="spName">ชื่อ นามสกุล</h2>
                             <div class="flex flex-wrap justify-center sm:justify-start gap-2 mt-2">
-                                <span class="bg-white/20 px-3 py-1 rounded-lg text-sm font-medium border border-white/20 shadow-sm">รหัส <span id="spCode">-</span></span>
+                                <span class="bg-white/20 px-3 py-1 rounded-lg text-sm font-medium border border-white/20 shadow-sm">เลขที่ <span id="spNo">-</span></span>
+                                <span class="bg-white/20 px-3 py-1 rounded-lg text-sm font-medium border border-white/20 shadow-sm">เลขประจำตัว <span id="spCode">-</span></span>
                                 <span class="bg-white/20 px-3 py-1 rounded-lg text-sm font-medium border border-white/20 shadow-sm">ห้อง <span id="spRoom">-</span></span>
                             </div>
                             <div class="flex flex-wrap justify-center sm:justify-start gap-2 mt-3">
@@ -1197,7 +1198,7 @@
                         <table class="w-full text-xs text-center border-collapse border border-gray-300 print-table">
                             <thead>
                                 <tr class="bg-gray-100 font-bold">
-                                    <th class="border border-gray-300 p-2 w-10">ที่</th><th class="border border-gray-300 p-2 w-16">รหัส</th>
+                                    <th class="border border-gray-300 p-2 w-10">เลขที่</th><th class="border border-gray-300 p-2 w-16">เลขประจำตัว</th>
                                     <th class="border border-gray-300 p-2 text-left">ชื่อ - นามสกุล</th><th class="border border-gray-300 p-2 w-12">มา</th>
                                     <th class="border border-gray-300 p-2 w-12">ขาด</th><th class="border border-gray-300 p-2 w-12">ป่วย</th>
                                     <th class="border border-gray-300 p-2 w-12">กิจ</th><th class="border border-gray-300 p-2 w-12">สาย</th>
@@ -1289,7 +1290,8 @@
                                     <table class="w-full text-left text-sm whitespace-nowrap bg-white">
                                         <thead class="bg-gray-100 text-gray-600 font-bold uppercase text-xs sticky top-0 z-10">
                                             <tr>
-                                                <th class="p-3 border-b text-center w-16">รหัส</th>
+                                                <th class="p-3 border-b text-center w-14">เลขที่</th>
+                                                <th class="p-3 border-b text-center w-24">เลขประจำตัว</th>
                                                 <th class="p-3 border-b">ชื่อ - นามสกุล</th>
                                                 <th class="p-3 border-b text-center w-20">ห้อง</th>
                                                 <th class="p-3 text-center w-24 border-b">จัดการ</th>
@@ -1347,8 +1349,8 @@
     <div id="roomManagerModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95 transition-transform" id="roomManagerBox">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-3xl"><h3 class="text-xl font-bold text-gray-800 flex items-center"><i class="fas fa-users text-purple-600 mr-2"></i> จัดการนักเรียนห้อง <span id="manageRoomTitle" class="text-purple-600 ml-1"></span></h3><button onclick="closeRoomManager()" class="text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-xl"></i></button></div>
-            <div class="p-4 flex justify-between items-center border-b border-gray-100"><span class="text-sm font-bold text-gray-600">จำนวน: <span id="manageRoomCount" class="text-purple-600">0</span> คน</span><button onclick="addStudentToCurrentRoom()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm transition-colors"><i class="fas fa-plus mr-1"></i> เพิ่มนักเรียน</button></div>
-            <div class="flex-1 overflow-y-auto p-4 bg-gray-50/50"><table class="w-full text-left text-sm whitespace-nowrap bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"><thead class="bg-gray-100 text-gray-600 font-bold uppercase text-xs"><tr><th class="p-3 w-16 text-center border-b">รหัส</th><th class="p-3 border-b">ชื่อ - นามสกุล</th><th class="p-3 text-center w-24 border-b">จัดการ</th></tr></thead><tbody id="manageRoomTableBody" class="divide-y divide-gray-100"></tbody></table></div>
+            <div class="p-4 flex flex-wrap gap-2 justify-between items-center border-b border-gray-100"><span class="text-sm font-bold text-gray-600">จำนวน: <span id="manageRoomCount" class="text-purple-600">0</span> คน</span><div class="flex flex-wrap gap-2"><button onclick="assignStudentNumbersCurrentRoom()" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold"><i class="fas fa-arrow-down-1-9 mr-1"></i> จัดเลขที่อัตโนมัติ</button><button onclick="addStudentToCurrentRoom()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm transition-colors"><i class="fas fa-plus mr-1"></i> เพิ่มนักเรียน</button></div></div>
+            <div class="flex-1 overflow-y-auto p-4 bg-gray-50/50"><table class="w-full text-left text-sm whitespace-nowrap bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"><thead class="bg-gray-100 text-gray-600 font-bold uppercase text-xs"><tr><th class="p-3 w-14 text-center border-b">เลขที่</th><th class="p-3 w-24 text-center border-b">เลขประจำตัว</th><th class="p-3 border-b">ชื่อ - นามสกุล</th><th class="p-3 text-center w-24 border-b">จัดการ</th></tr></thead><tbody id="manageRoomTableBody" class="divide-y divide-gray-100"></tbody></table></div>
         </div>
     </div>
 
@@ -1459,6 +1461,9 @@
         function shortLevelLabel(value){var text=String(value||'').trim(),match=text.match(/(?:มัธยมศึกษาปีที่|ม\.?|^)(\d+)/i);if(match)return'ม.'+Number(match[1]);match=text.match(/(?:ประถมศึกษาปีที่|ป\.?)(\d+)/i);if(match)return'ป.'+Number(match[1]);return text;}
         function longLevelLabel(value){var short=shortLevelLabel(value),match=short.match(/^ม\.(\d+)$/);if(match)return'ชั้นมัธยมศึกษาปีที่ '+Number(match[1]);match=short.match(/^ป\.(\d+)$/);if(match)return'ชั้นประถมศึกษาปีที่ '+Number(match[1]);return short||'-';}
         function studentLevel(st){return shortLevelLabel((st&&st.class)||String((st&&st.room)||'').split('/')[0]||'');}
+        function studentNumber(st){var value=st&&(st.no!=null&&st.no!==''?st.no:st.number);return value==null||value===''?'-':String(value);}
+        function studentRosterSort(a,b){var an=Number(studentNumber(a)),bn=Number(studentNumber(b)),aValid=Number.isFinite(an),bValid=Number.isFinite(bn);if(aValid&&bValid&&an!==bn)return an-bn;if(aValid!==bValid)return aValid?-1:1;return String(a&&a.code||'').localeCompare(String(b&&b.code||''),'th',{numeric:true});}
+        function duplicateStudentNumber(no,room,exceptId){var value=String(no||'').trim(),source=allStudents.length?allStudents:students;return value&&source.some(function(st){return String(st.room||'')===String(room||'')&&String(studentNumber(st))===value&&String(st.id)!==String(exceptId||'');});}
         function roomLevelHint(room){var source=allStudents.length?allStudents:students,match=source.find(function(st){return String(st.room||'')===String(room);});return match?studentLevel(match):'';}
         function classroomDisplay(room,level){var text=String(room||'').trim();if(!text)return'-';if(/^[มป]\./.test(text))return text;if(/^\d+\/\d+$/.test(text))return'ม.'+text;var short=shortLevelLabel(level||roomLevelHint(text));if(/^\d+$/.test(text)&&short)return short+'/'+Number(text);return text;}
         function levelOptionsHtml(){var source=allStudents.length?allStudents:students;return '<option value="all">ทุกระดับชั้น</option>'+Array.from(new Set(source.map(studentLevel).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'th',{numeric:true});}).map(function(level){return '<option value="'+profileEsc(level)+'">'+profileEsc(longLevelLabel(level))+'</option>';}).join('');}
@@ -1718,7 +1723,7 @@
                             const prefix=(raw.match(/^(เด็กชาย|เด็กหญิง|นาย|นางสาว|น\.ส\.|ด\.ช\.|ด\.ญ\.)/)||['',''])[1];
                             const clean=raw.slice(prefix.length).trim().split(/\s+/);
                             return {
-                                id:s.id||i+1, code:String(s.code||''), prefix:prefix.replace('เด็กชาย','ด.ช.').replace('เด็กหญิง','ด.ญ.'),
+                                id:s.id||i+1, code:String(s.code||''), no:s.no||s.number||'', prefix:prefix.replace('เด็กชาย','ด.ช.').replace('เด็กหญิง','ด.ญ.'),
                                 fname:clean.shift()||'', lname:clean.join(' '), class:(s.class||'').split('/')[0], 
                                 room:s.room||s.class||classrooms[0], year:s.year||schoolSettings.year, 
                                 term:s.term||schoolSettings.term, score:Number(s.score == null ? 100 : s.score)
@@ -1920,7 +1925,7 @@
                         <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-full flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm font-bold text-lg overflow-hidden">${studentProfileAvatarHtml(st)}</div>
                         <div class="flex-grow min-w-0">
                             <h3 class="font-bold text-gray-800 leading-snug break-words group-hover:text-purple-700 transition-colors">${st.prefix}${st.fname} ${st.lname}</h3>
-                            <p class="text-xs text-gray-500 mt-1">เลขประจำตัว ${st.code} • ${classroomDisplay(st.room,studentLevel(st))}</p>
+                            <p class="text-xs text-gray-500 mt-1">เลขที่ ${studentNumber(st)} • เลขประจำตัว ${st.code} • ${classroomDisplay(st.room,studentLevel(st))}</p>
                         </div>
                         <i class="fas fa-chevron-right text-gray-300 group-hover:text-purple-500 transition-colors"></i>
                     </div>`).join('');
@@ -1931,7 +1936,7 @@
                         <table class="w-full text-left text-sm min-w-[680px]">
                             <thead class="bg-gray-50 text-gray-600 text-xs uppercase">
                                 <tr>
-                                    <th class="p-4 w-20 text-center">ลำดับ</th>
+                                    <th class="p-4 w-20 text-center">เลขที่</th>
                                     <th class="p-4">รหัสนักเรียน</th>
                                     <th class="p-4">ชื่อ–นามสกุล</th>
                                     <th class="p-4 text-center">ระดับชั้น</th>
@@ -1943,7 +1948,7 @@
                             <tbody class="divide-y divide-gray-100">
                                 ${list.map((st,index)=>`
                                     <tr onclick="openStudentProfile('${st.code}')" class="hover:bg-purple-50 cursor-pointer transition">
-                                        <td class="p-4 text-center text-gray-400">${index+1}</td>
+                                        <td class="p-4 text-center text-purple-700 font-bold">${studentNumber(st)}</td>
                                         <td class="p-4 font-medium text-gray-600">${st.code}</td>
                                         <td class="p-4"><div class="flex items-center gap-3"><div class="w-11 h-11 rounded-full bg-sky-50 text-sky-600 overflow-hidden flex items-center justify-center font-bold flex-shrink-0 border-2 border-white shadow">${studentProfileAvatarHtml(st)}</div><div><b class="text-gray-800">${st.prefix}${st.fname} ${st.lname}</b><small class="block text-gray-400 mt-0.5">รูปเดียวกับโปรไฟล์นักเรียน</small></div></div></td>
                                         <td class="p-4 text-center text-gray-600">${longLevelLabel(studentLevel(st))}</td>
@@ -1962,8 +1967,9 @@
             if(!currentStudentProfile) return;
             renderStudentProfileAvatar(currentStudentProfile);
             document.getElementById('spName').innerText = `${currentStudentProfile.prefix}${currentStudentProfile.fname} ${currentStudentProfile.lname}`; 
+            document.getElementById('spNo').innerText = studentNumber(currentStudentProfile);
             document.getElementById('spCode').innerText = currentStudentProfile.code; 
-            document.getElementById('spRoom').innerText = currentStudentProfile.room; 
+            document.getElementById('spRoom').innerText = classroomDisplay(currentStudentProfile.room,studentLevel(currentStudentProfile)); 
             document.getElementById('spScore').innerText = currentStudentProfile.score;
             renderStudentQuizHistory();
             renderStudentAssignments(); 
@@ -2034,7 +2040,7 @@
                 const latestText = latest ? (Number(latest.score)||0)+'/'+(Number(latest.total)||0)+' ('+(Number(latest.percent)||0)+'%)' : '—';
                 const statusHtml = latest ? '<span class="px-2 py-1 rounded-lg text-xs font-bold '+(latest.passed?'bg-emerald-50 text-emerald-600':'bg-amber-50 text-amber-600')+'">'+(latest.passed?'ผ่าน':'ไม่ผ่าน')+'</span>' : '<span class="px-2 py-1 rounded-lg text-xs font-bold bg-gray-100 text-gray-500">ยังไม่ทำ</span>';
                 const detailHtml = latest ? '<button data-student="'+escapeStudentQuizText(st.code)+'" data-lesson="'+escapeStudentQuizText(row.lesson.id)+'" onclick="showQuizResultHistory(this.dataset.student,this.dataset.lesson)" class="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-600 text-xs font-bold">ดูย้อนหลัง</button>' : '—';
-                return '<tr class="hover:bg-gray-50"><td class="p-3"><p class="font-bold text-gray-800">'+name+'</p><p class="text-xs text-gray-400">'+escapeStudentQuizText(st.code||'-')+'</p></td><td class="p-3 text-center">'+escapeStudentQuizText(classroomDisplay(st.room,studentLevel(st)))+'</td><td class="p-3 font-medium">'+escapeStudentQuizText(row.lesson.title||'-')+'</td><td class="p-3 text-center font-bold '+(latest?'text-purple-600':'text-gray-300')+'">'+latestText+'</td><td class="p-3 text-center font-bold text-blue-600">'+(row.best==null?'—':row.best+'%')+'</td><td class="p-3 text-center">'+row.history.length+'</td><td class="p-3 text-center">'+statusHtml+'</td><td class="p-3 text-center">'+detailHtml+'</td></tr>';
+                return '<tr class="hover:bg-gray-50"><td class="p-3"><p class="font-bold text-gray-800">'+name+'</p><p class="text-xs text-gray-400">เลขที่ '+escapeStudentQuizText(studentNumber(st))+' · เลขประจำตัว '+escapeStudentQuizText(st.code||'-')+'</p></td><td class="p-3 text-center">'+escapeStudentQuizText(classroomDisplay(st.room,studentLevel(st)))+'</td><td class="p-3 font-medium">'+escapeStudentQuizText(row.lesson.title||'-')+'</td><td class="p-3 text-center font-bold '+(latest?'text-purple-600':'text-gray-300')+'">'+latestText+'</td><td class="p-3 text-center font-bold text-blue-600">'+(row.best==null?'—':row.best+'%')+'</td><td class="p-3 text-center">'+row.history.length+'</td><td class="p-3 text-center">'+statusHtml+'</td><td class="p-3 text-center">'+detailHtml+'</td></tr>';
             }).join('') : '<tr><td colspan="8" class="text-center py-10 text-gray-400">ไม่พบข้อมูลตามตัวกรอง</td></tr>';
         }
 
@@ -2073,16 +2079,16 @@
         function renderGradebook() {
             if(!isAuth){switchView('dashboard');return;} const source=allStudents.length?allStudents:students,levelEl=document.getElementById('gradebookLevel'),oldLevel=levelEl.value||'all';levelEl.innerHTML=levelOptionsHtml();levelEl.value=Array.from(levelEl.options).some(o=>o.value===oldLevel)?oldLevel:'all';const level=levelEl.value||'all',roomEl=document.getElementById('gradebookRoom'),old=roomEl.value,rooms=[...new Set(source.filter(s=>level==='all'||studentLevel(s)===level).map(s=>s.room).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'th',{numeric:true}));roomEl.innerHTML='<option value="all">ทุกห้อง</option>'+rooms.map(r=>'<option value="'+escapeStudentQuizText(r)+'">'+escapeStudentQuizText(classroomDisplay(r,level==='all'?roomLevelHint(r):level))+'</option>').join('');roomEl.value=old==='all'||rooms.includes(old)?old:'all';const room=roomEl.value||'all',query=(document.getElementById('gradebookSearch').value||'').toLowerCase(),weights=getGradeWeights();document.getElementById('gradebookAssignmentWeight').value=weights.assignments;document.getElementById('gradebookQuizWeight').value=weights.quizzes;document.getElementById('gradebookPrintSchool').innerText=schoolSettings.schoolName||'โรงเรียน';document.getElementById('gradebookPrintTerm').innerText=(schoolSettings.term||'')+'/'+(schoolSettings.year||'');
             const list=source.filter(st=>(level==='all'||studentLevel(st)===level)&&(room==='all'||String(st.room)===String(room))&&(!query||(`${st.code||''} ${(st.prefix||'')+(st.fname||'')} ${st.lname||''}`).toLowerCase().includes(query))).sort((a,b)=>String(a.room||'').localeCompare(String(b.room||''),'th',{numeric:true})||(Number(a.no)||Number(a.number)||999)-(Number(b.no)||Number(b.number)||999));
-            document.getElementById('gradebookBody').innerHTML=list.length?list.map(st=>{const g=getStudentGradeData(st),name=escapeStudentQuizText((st.prefix||'')+(st.fname||'')+' '+(st.lname||'')),resultLevel=gradeLevel(g.total,g.hasScores);return '<tr><td class="p-3"><b>'+name+'</b><div class="text-xs text-gray-400">'+escapeStudentQuizText(st.code||'-')+'</div></td><td class="p-3 text-center">'+escapeStudentQuizText(classroomDisplay(st.room,studentLevel(st)))+'</td><td class="p-3 text-center">'+g.assignmentPercent.toFixed(1)+'%</td><td class="p-3 text-center">'+g.quizPercent.toFixed(1)+'%</td><td class="p-3 text-center font-bold text-purple-600">'+g.total.toFixed(1)+'%</td><td class="p-3 text-center">'+resultLevel+'</td><td class="p-3 text-center text-rose-600">'+g.assignmentMissing+'</td><td class="p-3 text-center text-amber-600">'+g.quizMissing+'</td><td class="p-3 text-center">'+(Number(st.score)||0)+'</td></tr>';}).join(''):'<tr><td colspan="9" class="text-center py-10 text-gray-400">ไม่พบข้อมูลนักเรียน</td></tr>';
+            document.getElementById('gradebookBody').innerHTML=list.length?list.map(st=>{const g=getStudentGradeData(st),name=escapeStudentQuizText((st.prefix||'')+(st.fname||'')+' '+(st.lname||'')),resultLevel=gradeLevel(g.total,g.hasScores);return '<tr><td class="p-3"><b>'+name+'</b><div class="text-xs text-gray-400">เลขที่ '+escapeStudentQuizText(studentNumber(st))+' · เลขประจำตัว '+escapeStudentQuizText(st.code||'-')+'</div></td><td class="p-3 text-center">'+escapeStudentQuizText(classroomDisplay(st.room,studentLevel(st)))+'</td><td class="p-3 text-center">'+g.assignmentPercent.toFixed(1)+'%</td><td class="p-3 text-center">'+g.quizPercent.toFixed(1)+'%</td><td class="p-3 text-center font-bold text-purple-600">'+g.total.toFixed(1)+'%</td><td class="p-3 text-center">'+resultLevel+'</td><td class="p-3 text-center text-rose-600">'+g.assignmentMissing+'</td><td class="p-3 text-center text-amber-600">'+g.quizMissing+'</td><td class="p-3 text-center">'+(Number(st.score)||0)+'</td></tr>';}).join(''):'<tr><td colspan="9" class="text-center py-10 text-gray-400">ไม่พบข้อมูลนักเรียน</td></tr>';
         }
 
         function initIndividualReport(){if(!isAuth){switchView('dashboard');return;}const levelEl=document.getElementById('studentReportLevel'),level=levelEl?levelEl.value:'all',source=allStudents.length?allStudents:students,roomEl=document.getElementById('studentReportRoom'),old=roomEl.value;const rooms=[...new Set(source.filter(s=>level==='all'||studentLevel(s)===level).map(s=>s.room).filter(Boolean))].sort((a,b)=>String(a).localeCompare(String(b),'th',{numeric:true}));roomEl.innerHTML='<option value="">เลือกห้อง</option>'+rooms.map(r=>'<option value="'+escapeStudentQuizText(r)+'">'+escapeStudentQuizText(classroomDisplay(r,level==='all'?roomLevelHint(r):level))+'</option>').join('');if(rooms.includes(old))roomEl.value=old;if(roomEl.value)updateStudentReportNames();else{document.getElementById('studentReportCode').innerHTML='<option value="">เลือกนักเรียน</option>';document.getElementById('studentReportCode').disabled=true;}}
-        function updateStudentReportNames(){const room=document.getElementById('studentReportRoom').value,level=(document.getElementById('studentReportLevel')||{}).value||'all',select=document.getElementById('studentReportCode'),source=allStudents.length?allStudents:students;const list=source.filter(s=>(level==='all'||studentLevel(s)===level)&&String(s.room)===String(room)).sort((a,b)=>(Number(a.no)||Number(a.number)||999)-(Number(b.no)||Number(b.number)||999));select.innerHTML='<option value="">เลือกนักเรียน</option>'+list.map(s=>'<option value="'+escapeStudentQuizText(s.code)+'">'+escapeStudentQuizText((s.prefix||'')+(s.fname||'')+' '+(s.lname||''))+'</option>').join('');select.disabled=!room;document.getElementById('studentReportContent').classList.add('hidden');document.getElementById('studentReportEmpty').classList.remove('hidden');}
+        function updateStudentReportNames(){const room=document.getElementById('studentReportRoom').value,level=(document.getElementById('studentReportLevel')||{}).value||'all',select=document.getElementById('studentReportCode'),source=allStudents.length?allStudents:students;const list=source.filter(s=>(level==='all'||studentLevel(s)===level)&&String(s.room)===String(room)).sort(studentRosterSort);select.innerHTML='<option value="">เลือกนักเรียน</option>'+list.map(s=>'<option value="'+escapeStudentQuizText(s.code)+'">เลขที่ '+escapeStudentQuizText(studentNumber(s))+' · '+escapeStudentQuizText((s.prefix||'')+(s.fname||'')+' '+(s.lname||''))+'</option>').join('');select.disabled=!room;document.getElementById('studentReportContent').classList.add('hidden');document.getElementById('studentReportEmpty').classList.remove('hidden');}
 
         function getStudentAttendanceSummary(st){const counts={ma:0,khad:0,lap:0,lak:0,sai:0};function add(history){Object.values(history||{}).forEach(rec=>{const item=rec[String(st.id)]||rec[st.id]||rec[String(st.code)]||rec[st.code];const status=item&&item.status?item.status:item;if(counts[status]!==undefined)counts[status]++;});}add(homeroomHistory);add(attendanceHistory);const total=Object.values(counts).reduce((a,b)=>a+b,0);counts.total=total;counts.rate=total?Math.round((counts.ma+counts.sai)/total*100):0;return counts;}
         function renderIndividualReport(){const code=document.getElementById('studentReportCode').value,source=allStudents.length?allStudents:students,st=source.find(s=>String(s.code)===String(code));if(!st)return;const g=getStudentGradeData(st),att=getStudentAttendanceSummary(st),attempts=(window.getQuizAttempts?window.getQuizAttempts():(quizAttempts||[])).filter(a=>String(a.studentCode)===String(st.code)),subs=(ahSubmissions||[]).filter(s=>String(s.studentCode)===String(st.code)),beh=(behaviorRecords||[]).filter(r=>String(r.stId)===String(st.id)||String(r.studentCode)===String(st.code));const name=escapeStudentQuizText((st.prefix||'')+(st.fname||'')+' '+(st.lname||''));
             document.getElementById('studentReportEmpty').classList.add('hidden');const content=document.getElementById('studentReportContent');content.classList.remove('hidden');content.innerHTML='<div class="text-center border-b pb-5"><h1 class="text-xl font-bold">'+escapeStudentQuizText(schoolSettings.schoolName||'โรงเรียน')+'</h1><h2 class="text-lg font-bold mt-2">รายงานผลการเรียนรายบุคคล</h2><p class="text-sm">ภาคเรียนที่ '+escapeStudentQuizText(schoolSettings.term||'')+'/'+escapeStudentQuizText(schoolSettings.year||'')+'</p></div><div class="mt-5 grid grid-cols-2 gap-3 text-sm"><p><b>ชื่อ:</b> '+name+'</p><p><b>รหัส:</b> '+escapeStudentQuizText(st.code||'-')+'</p><p><b>ห้อง:</b> '+escapeStudentQuizText(st.room||'-')+'</p><p><b>คะแนนพฤติกรรม:</b> '+(Number(st.score)||0)+'</p></div><div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5"><div class="border rounded p-3 text-center"><small>มา/สาย</small><b class="block text-lg">'+(att.ma+att.sai)+'</b></div><div class="border rounded p-3 text-center"><small>ขาด</small><b class="block text-lg text-red-600">'+att.khad+'</b></div><div class="border rounded p-3 text-center"><small>ลา</small><b class="block text-lg text-blue-600">'+(att.lap+att.lak)+'</b></div><div class="border rounded p-3 text-center"><small>อัตราเข้าเรียน</small><b class="block text-lg text-purple-600">'+att.rate+'%</b></div></div><h3 class="font-bold mt-6 mb-2">สรุปคะแนน</h3><table class="w-full text-sm border-collapse"><tr class="bg-gray-100"><th class="border p-2">งาน</th><th class="border p-2">แบบทดสอบ</th><th class="border p-2">คะแนนรวม</th><th class="border p-2">ผล</th></tr><tr><td class="border p-2 text-center">'+g.assignmentPercent.toFixed(1)+'%</td><td class="border p-2 text-center">'+g.quizPercent.toFixed(1)+'%</td><td class="border p-2 text-center font-bold">'+g.total.toFixed(1)+'%</td><td class="border p-2 text-center">'+gradeLevel(g.total,g.hasScores)+'</td></tr></table><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6"><div class="border rounded p-4"><h4 class="font-bold">การส่งงาน</h4><p class="text-sm mt-2">ได้รับ '+((ahCategories||[]).filter(c=>!c.archived&&((c.allowedRooms||[]).includes('all')||(c.allowedRooms||[]).includes(st.room))).length)+' งาน</p><p class="text-sm">ส่งแล้ว '+subs.length+' งาน</p><p class="text-sm text-rose-600">ค้าง '+g.assignmentMissing+' งาน</p></div><div class="border rounded p-4"><h4 class="font-bold">แบบทดสอบ</h4><p class="text-sm mt-2">ทำแล้ว '+new Set(attempts.map(a=>a.lessonId)).size+' บท</p><p class="text-sm">ทำทั้งหมด '+attempts.length+' ครั้ง</p><p class="text-sm text-amber-600">ยังไม่ทำ '+g.quizMissing+' บท</p></div><div class="border rounded p-4"><h4 class="font-bold">พฤติกรรม</h4><p class="text-sm mt-2">บันทึก '+beh.length+' รายการ</p><p class="text-sm text-emerald-600">เพิ่ม +'+beh.filter(r=>Number(r.change)>0).reduce((n,r)=>n+Number(r.change),0)+' คะแนน</p><p class="text-sm text-rose-600">หัก -'+Math.abs(beh.filter(r=>Number(r.change)<0).reduce((n,r)=>n+Number(r.change),0))+' คะแนน</p></div></div><div class="mt-16 flex justify-between text-center text-sm"><div><p>(................................................)</p><p>ครูประจำชั้น</p></div><div><p>(................................................)</p><p>ผู้ปกครอง</p></div></div>';
-            content.innerHTML=content.innerHTML.replace('<b>รหัส:</b>','<b>เลขประจำตัว:</b>').replace('<b>ห้อง:</b> '+escapeStudentQuizText(st.room||'-'),'<b>ชั้น/ห้อง:</b> '+escapeStudentQuizText(classroomDisplay(st.room,studentLevel(st))));
+            content.innerHTML=content.innerHTML.replace('<b>รหัส:</b>','<b>เลขประจำตัว:</b>').replace('<b>ห้อง:</b> '+escapeStudentQuizText(st.room||'-'),'<b>ชั้น/ห้อง:</b> '+escapeStudentQuizText(classroomDisplay(st.room,studentLevel(st))));var infoGrid=content.querySelector('.mt-5.grid');if(infoGrid){var numberInfo=document.createElement('p');numberInfo.innerHTML='<b>เลขที่:</b> '+escapeStudentQuizText(studentNumber(st));infoGrid.insertBefore(numberInfo,infoGrid.firstChild);}
             if(st.profileUrl){var reportHead=content.firstElementChild,profile=document.createElement('button');profile.type='button';profile.className='no-print mx-auto -mt-2 mb-4 block';profile.innerHTML='<img src="'+profileEsc(st.profileUrl)+'" class="w-24 h-24 rounded-2xl object-cover border-4 border-white shadow-lg cursor-zoom-in" alt="รูปโปรไฟล์ '+name+'"><span class="block text-xs text-purple-600 font-bold mt-1">กดเพื่อขยายรูป</span>';profile.onclick=function(event){openProfilePhoto(event,st.profileUrl,(st.prefix||'')+(st.fname||'')+' '+(st.lname||''));};reportHead.insertAdjacentElement('afterend',profile);}
         }
 
@@ -2096,9 +2102,9 @@
 
         function exportGradebookCSV(){
             const source=allStudents.length?allStudents:students,level=(document.getElementById('gradebookLevel')||{}).value||'all',room=document.getElementById('gradebookRoom').value||'all',query=(document.getElementById('gradebookSearch').value||'').toLowerCase(),weights=getGradeWeights();
-            const list=source.filter(st=>(level==='all'||studentLevel(st)===level)&&(room==='all'||String(st.room)===String(room))&&(!query||(`${st.code||''} ${(st.prefix||'')+(st.fname||'')} ${st.lname||''}`).toLowerCase().includes(query))).sort((a,b)=>String(a.room||'').localeCompare(String(b.room||''),'th',{numeric:true}));
-            const rows=[['รหัสนักเรียน','ชื่อ-นามสกุล','ห้อง','คะแนนงาน (%)','น้ำหนักงาน (%)','คะแนนแบบทดสอบ (%)','น้ำหนักแบบทดสอบ (%)','คะแนนรวม (%)','ระดับผล','งานค้าง','ข้อสอบยังไม่ทำ','คะแนนพฤติกรรม']];
-            list.forEach(st=>{const g=getStudentGradeData(st);rows.push([st.code||'',(st.prefix||'')+(st.fname||'')+' '+(st.lname||''),st.room||'',g.assignmentPercent.toFixed(2),weights.assignments,g.quizPercent.toFixed(2),weights.quizzes,g.total.toFixed(2),gradeLevel(g.total,g.hasScores),g.assignmentMissing,g.quizMissing,Number(st.score)||0]);});
+            const list=source.filter(st=>(level==='all'||studentLevel(st)===level)&&(room==='all'||String(st.room)===String(room))&&(!query||(`${st.code||''} ${(st.prefix||'')+(st.fname||'')} ${st.lname||''}`).toLowerCase().includes(query))).sort((a,b)=>String(a.room||'').localeCompare(String(b.room||''),'th',{numeric:true})||studentRosterSort(a,b));
+            const rows=[['เลขที่','เลขประจำตัวนักเรียน','ชื่อ-นามสกุล','ชั้น/ห้อง','คะแนนงาน (%)','น้ำหนักงาน (%)','คะแนนแบบทดสอบ (%)','น้ำหนักแบบทดสอบ (%)','คะแนนรวม (%)','ระดับผล','งานค้าง','ข้อสอบยังไม่ทำ','คะแนนพฤติกรรม']];
+            list.forEach(st=>{const g=getStudentGradeData(st);rows.push([studentNumber(st)==='-'?'':studentNumber(st),st.code||'',(st.prefix||'')+(st.fname||'')+' '+(st.lname||''),classroomDisplay(st.room,studentLevel(st)),g.assignmentPercent.toFixed(2),weights.assignments,g.quizPercent.toFixed(2),weights.quizzes,g.total.toFixed(2),gradeLevel(g.total,g.hasScores),g.assignmentMissing,g.quizMissing,Number(st.score)||0]);});
             downloadSystemCSV('สมุดคะแนนรวม_'+csvSafeFilePart(level)+'_'+csvSafeFilePart(room)+'_'+getLocalISODate()+'.csv',rows);
         }
 
@@ -2107,13 +2113,14 @@
             const lessonItems=(window.getDemoLessons?window.getDemoLessons():(lessons||[])).filter(l=>l.quiz&&l.quiz.enabled&&(l.quiz.questions||[]).length&&(lessonFilter==='all'||String(l.id)===String(lessonFilter)));const attempts=window.getQuizAttempts?window.getQuizAttempts():(quizAttempts||[]);let data=[];
             (students||[]).filter(st=>room==='all'||String(st.room)===String(room)).forEach(st=>lessonItems.forEach(lesson=>{const history=attempts.filter(a=>String(a.studentCode)===String(st.code)&&String(a.lessonId)===String(lesson.id)).sort((a,b)=>new Date(b.date)-new Date(a.date)),latest=history[0]||null,best=history.length?Math.max(...history.map(a=>Number(a.percent)||0)):null;data.push({st,lesson,history,latest,best});}));
             data=data.filter(x=>{const text=`${x.st.code||''} ${(x.st.prefix||'')+(x.st.fname||'')} ${x.st.lname||''}`.toLowerCase();if(query&&!text.includes(query))return false;if(status==='missing')return !x.latest;if(status==='passed')return x.latest&&x.latest.passed;if(status==='failed')return x.latest&&!x.latest.passed;return true;});
-            const rows=[['รหัสนักเรียน','ชื่อ-นามสกุล','ห้อง','บทเรียน','คะแนนล่าสุด','คะแนนเต็ม','ร้อยละล่าสุด','คะแนนสูงสุด (%)','จำนวนครั้ง','ผลล่าสุด','วันเวลาล่าสุด']];data.forEach(x=>rows.push([x.st.code||'',(x.st.prefix||'')+(x.st.fname||'')+' '+(x.st.lname||''),x.st.room||'',x.lesson.title||'',x.latest?x.latest.score:'',x.latest?x.latest.total:'',x.latest?x.latest.percent:'',x.best==null?'':x.best,x.history.length,x.latest?(x.latest.passed?'ผ่าน':'ไม่ผ่าน'):'ยังไม่ทำ',x.latest&&x.latest.date?new Date(x.latest.date).toLocaleString('th-TH'):'']));
+            data.sort((a,b)=>String(a.st.room||'').localeCompare(String(b.st.room||''),'th',{numeric:true})||studentRosterSort(a.st,b.st));
+            const rows=[['เลขที่','เลขประจำตัวนักเรียน','ชื่อ-นามสกุล','ชั้น/ห้อง','บทเรียน','คะแนนล่าสุด','คะแนนเต็ม','ร้อยละล่าสุด','คะแนนสูงสุด (%)','จำนวนครั้ง','ผลล่าสุด','วันเวลาล่าสุด']];data.forEach(x=>rows.push([studentNumber(x.st)==='-'?'':studentNumber(x.st),x.st.code||'',(x.st.prefix||'')+(x.st.fname||'')+' '+(x.st.lname||''),classroomDisplay(x.st.room,studentLevel(x.st)),x.lesson.title||'',x.latest?x.latest.score:'',x.latest?x.latest.total:'',x.latest?x.latest.percent:'',x.best==null?'':x.best,x.history.length,x.latest?(x.latest.passed?'ผ่าน':'ไม่ผ่าน'):'ยังไม่ทำ',x.latest&&x.latest.date?new Date(x.latest.date).toLocaleString('th-TH'):'']));
             downloadSystemCSV('ผลการสอบ_'+csvSafeFilePart(room)+'_'+getLocalISODate()+'.csv',rows);
         }
 
         function exportIndividualReportCSV(){
             const code=document.getElementById('studentReportCode').value,st=(students||[]).find(s=>String(s.code)===String(code));if(!st)return Swal.fire('กรุณาเลือกนักเรียน','','warning');const g=getStudentGradeData(st),att=getStudentAttendanceSummary(st),attempts=(window.getQuizAttempts?window.getQuizAttempts():(quizAttempts||[])).filter(a=>String(a.studentCode)===String(st.code)),beh=(behaviorRecords||[]).filter(r=>String(r.stId)===String(st.id)||String(r.studentCode)===String(st.code));
-            const rows=[['รายการ','ข้อมูล'],['รหัสนักเรียน',st.code||''],['ชื่อ-นามสกุล',(st.prefix||'')+(st.fname||'')+' '+(st.lname||'')],['ห้อง',st.room||''],['ปีการศึกษา',schoolSettings.year||''],['ภาคเรียน',schoolSettings.term||''],['มาเรียน',att.ma],['มาสาย',att.sai],['ขาด',att.khad],['ลาป่วย',att.lap],['ลากิจ',att.lak],['อัตราเข้าเรียน (%)',att.rate],['คะแนนงาน (%)',g.assignmentPercent.toFixed(2)],['คะแนนแบบทดสอบ (%)',g.quizPercent.toFixed(2)],['คะแนนรวม (%)',g.total.toFixed(2)],['ระดับผล',gradeLevel(g.total,g.hasScores)],['งานค้าง',g.assignmentMissing],['ข้อสอบยังไม่ทำ',g.quizMissing],['ทำข้อสอบทั้งหมด (ครั้ง)',attempts.length],['คะแนนพฤติกรรมปัจจุบัน',Number(st.score)||0],['รายการพฤติกรรม',beh.length]];
+            const rows=[['รายการ','ข้อมูล'],['เลขที่',studentNumber(st)],['เลขประจำตัวนักเรียน',st.code||''],['ชื่อ-นามสกุล',(st.prefix||'')+(st.fname||'')+' '+(st.lname||'')],['ชั้น/ห้อง',classroomDisplay(st.room,studentLevel(st))],['ปีการศึกษา',schoolSettings.year||''],['ภาคเรียน',schoolSettings.term||''],['มาเรียน',att.ma],['มาสาย',att.sai],['ขาด',att.khad],['ลาป่วย',att.lap],['ลากิจ',att.lak],['อัตราเข้าเรียน (%)',att.rate],['คะแนนงาน (%)',g.assignmentPercent.toFixed(2)],['คะแนนแบบทดสอบ (%)',g.quizPercent.toFixed(2)],['คะแนนรวม (%)',g.total.toFixed(2)],['ระดับผล',gradeLevel(g.total,g.hasScores)],['งานค้าง',g.assignmentMissing],['ข้อสอบยังไม่ทำ',g.quizMissing],['ทำข้อสอบทั้งหมด (ครั้ง)',attempts.length],['คะแนนพฤติกรรมปัจจุบัน',Number(st.score)||0],['รายการพฤติกรรม',beh.length]];
             downloadSystemCSV('รายงานรายบุคคล_'+csvSafeFilePart(st.code)+'_'+getLocalISODate()+'.csv',rows);
         }
 
@@ -2635,8 +2642,9 @@
             let list = (allStudents.length ? allStudents : students).slice();
             if (levelF !== 'all') list = list.filter(s => studentLevel(s) === levelF);
             if (roomF !== 'all') list = list.filter(s => s.room === roomF);
+            list.sort(function(a,b){return String(a.room||'').localeCompare(String(b.room||''),'th',{numeric:true})||studentRosterSort(a,b);});
             
-            let headHTML = `<tr><th class="p-3 text-left min-w-[300px] sticky left-0 z-20">ชื่อ - นามสกุล</th><th class="p-3 text-left min-w-[110px]">ชื่อเล่น</th><th class="p-3 text-center w-24">ห้อง</th>`;
+            let headHTML = `<tr><th class="p-3 text-center w-16">เลขที่</th><th class="p-3 text-left min-w-[300px] sticky left-0 z-20">ชื่อ - นามสกุล</th><th class="p-3 text-left min-w-[110px]">ชื่อเล่น</th><th class="p-3 text-center w-24">ห้อง</th>`;
             ahCategories.filter(cat => !cat.archived).forEach(cat => { 
                 const editAttrs = isAuth ? `class="p-3 text-center w-32 min-w-[120px] cursor-pointer hover:bg-gray-200 transition" onclick="ahOpenEditCategoryModal('${cat.id}')" title="คลิกเพื่อแก้ไข"` : `class="p-3 text-center w-32 min-w-[120px]" title="ดูข้อมูลภาระงาน"`;
                 const labelClass = isAuth ? 'truncate block text-xs w-full text-purple-700 underline' : 'truncate block text-xs w-full text-gray-700';
@@ -2646,7 +2654,7 @@
             thead.innerHTML = headHTML;
             
             if (list.length === 0) { 
-                tbody.innerHTML = `<tr><td colspan="${3+ahCategories.length}" class="text-center py-10 text-gray-500">ไม่พบนักเรียนในห้องที่เลือก</td></tr>`; 
+                tbody.innerHTML = `<tr><td colspan="${4+ahCategories.length}" class="text-center py-10 text-gray-500">ไม่พบนักเรียนในห้องที่เลือก</td></tr>`; 
                 return; 
             }
 
@@ -2654,8 +2662,9 @@
             list.forEach(st => {
                 let rowHasTargetStatus = statF === 'all';
                 let rowHTML = `<tr class="hover:bg-purple-50 transition-colors">
+                    <td class="p-3 text-center text-purple-700 font-bold">${studentNumber(st)}</td>
                     <td class="p-3 font-bold text-gray-800 sticky left-0 bg-white border-r border-gray-100 group-hover:bg-purple-50 transition-colors z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.05)]">
-                        <div class="flex items-center gap-2"><span class="w-6 text-xs text-gray-400 text-center flex-shrink-0">${st.code.slice(-2)}</span><span class="whitespace-normal break-words leading-5">${st.prefix}${st.fname} ${st.lname}</span></div>
+                        <div class="flex items-center gap-2"><span class="whitespace-normal break-words leading-5">${st.prefix}${st.fname} ${st.lname}</span></div>
                     </td>
                     <td class="p-3 text-left text-gray-700">${studentNicknameMap[String(st.code)]||st.nickname||'-'}</td>
                     <td class="p-3 text-center text-gray-600 text-xs font-medium">${classroomDisplay(st.room,studentLevel(st))}</td>`;
@@ -2803,7 +2812,7 @@
                     </button>
                     <div class="p-5 flex-1">
                         <h3 class="font-bold text-gray-800">${st.prefix||''}${st.fname||'ไม่พบนักเรียน'} ${st.lname||''}</h3>
-                        <p class="text-xs text-gray-500 mt-1">เลขประจำตัว ${st.code||'-'} · ${classroomDisplay(sub.room||st.room,studentLevel(st))}</p>
+                        <p class="text-xs text-gray-500 mt-1">เลขที่ ${studentNumber(st)} · เลขประจำตัว ${st.code||'-'} · ${classroomDisplay(sub.room||st.room,studentLevel(st))}</p>
                         <p class="text-xs text-purple-600 mt-1"><i class="far fa-clock mr-1"></i>ส่งเมื่อ ${formatSubmissionDateTime(sub.date)}</p>
                         <p class="text-sm text-gray-600 bg-gray-50 rounded-xl p-3 mt-3">${sub.caption||'ไม่มีคำอธิบาย'}</p>
                         ${sub.score!==undefined?`<div class="mt-2 bg-purple-50 text-purple-700 border border-purple-100 rounded-lg p-2 text-sm font-bold"><i class="fas fa-award mr-1"></i>คะแนน ${sub.score}/${sub.maxScore||100}</div>`:''}
@@ -2901,7 +2910,7 @@
             const key = `${date}_${room}`; 
             const saved = homeroomHistory[key] || {}; 
             loadHomeroomActivity(key);
-            const list = students.filter(s => s.room === room).sort((a,b)=> a.id - b.id);
+            const list = students.filter(s => s.room === room).sort(studentRosterSort);
             
             document.getElementById('hmRoomCount').innerText = list.length; 
             const container = document.getElementById('homeroomList');
@@ -2921,7 +2930,7 @@
                 return `
                 <div class="flex flex-col sm:flex-row items-center py-3 px-4 hover:bg-gray-50 student-hm-row border-b border-gray-100" data-id="${s.id}">
                     <div class="flex items-center w-full sm:w-auto flex-1 mb-2 sm:mb-0">
-                        <div class="w-10 sm:w-12 text-center font-bold text-gray-400">${s.code.slice(-2)}</div>
+                        <div class="w-10 sm:w-12 text-center font-bold text-purple-600" title="เลขที่">${studentNumber(s)}</div>
                         <div class="flex-1 font-bold text-gray-800 text-sm truncate">${s.prefix}${s.fname} ${s.lname}</div>
                     </div>
                     <div class="flex w-full sm:w-auto justify-between sm:justify-end gap-2 sm:gap-6">
@@ -3178,7 +3187,7 @@
         }
         function officialPrintFooter(){return `<div class="report-note">พิมพ์เมื่อ ${escapeAttendanceHtml(new Date().toLocaleString('th-TH'))}</div>`;}
         function printSummaryReport(){
-            const table=cloneOfficialTable('#view-summary table',{compact:true,nameColumn:1,ensureStudentCode:true});if(!table)return Swal.fire('ยังไม่มีข้อมูลรายงาน','','info');
+            const table=cloneOfficialTable('#view-summary table',{compact:true,nameColumn:2,ensureStudentCode:true});if(!table)return Swal.fire('ยังไม่มีข้อมูลรายงาน','','info');
             openOfficialPrintDocument('รายงานสรุปการส่งงาน',officialReportHeader('รายงานสรุปการส่งงาน',currentFilterLabel('summaryLevelFilter','summaryRoomFilter')+' · ภาคเรียน '+(schoolSettings.term||'')+'/'+(schoolSettings.year||''))+table+officialPrintFooter(),{landscape:false});
         }
         function printGradebookReport(){
@@ -3205,7 +3214,7 @@
         function openAttendanceSummary(key){
             const rec=attendanceHistory[key]; if(!rec)return Swal.fire('ไม่พบข้อมูล','ไม่พบรายการเช็กชื่อนี้','error');
             const p=key.split('_'),date=p[0],period=p.length>=4?p[1]:'-',subject=p.length>=4?p[2]:p[1],room=p.length>=4?p[3]:p[2],groups={ma:[],khad:[],lap:[],lak:[],sai:[]};
-            Object.entries(rec).forEach(([id,data])=>{const status=typeof data==='string'?data:data.status,st=students.find(s=>String(s.id)===String(id)),name=st?`${st.prefix||''}${st.fname||''} ${st.lname||''}`.trim():`รหัส ${id}`;if(groups[status])groups[status].push(name);});
+            Object.entries(rec).forEach(([id,data])=>{const status=typeof data==='string'?data:data.status,source=allStudents.length?allStudents:students,st=source.find(s=>String(s.id)===String(id)||String(s.code)===String(id)),name=st?`เลขที่ ${studentNumber(st)} · ${(st.prefix||'')+(st.fname||'')} ${st.lname||''}`.trim():`รหัส ${id}`;if(groups[status])groups[status].push(name);});
             const total=Object.values(groups).reduce((n,a)=>n+a.length,0),absent=groups.khad.length+groups.lap.length+groups.lak.length;
             const card=(label,n,style)=>`<div class="rounded-xl border p-3 text-center ${style}"><div class="text-xs">${label}</div><div class="text-2xl font-bold">${n}</div></div>`;
             const cards=card('มาเรียน',groups.ma.length,'bg-emerald-50 text-emerald-700')+card('ขาด',groups.khad.length,'bg-red-50 text-red-700')+card('ป่วย',groups.lap.length,'bg-blue-50 text-blue-700')+card('กิจ',groups.lak.length,'bg-purple-50 text-purple-700')+card('สาย',groups.sai.length,'bg-amber-50 text-amber-700');
@@ -3216,9 +3225,9 @@
         }
         function printAttendanceSummaryDocument(key){
             const rec=attendanceHistory[key];if(!rec)return;const p=key.split('_'),date=p[0],period=p.length>=4?p[1]:'-',subject=p.length>=4?p[2]:p[1],room=p.length>=4?p[3]:p[2],labels={ma:'มาเรียน',khad:'ขาดเรียน',lap:'ลาป่วย',lak:'ลากิจ',sai:'มาสาย'},groups={ma:[],khad:[],lap:[],lak:[],sai:[]};
-            Object.entries(rec).forEach(([id,data])=>{const status=typeof data==='string'?data:data.status,source=allStudents.length?allStudents:students,st=source.find(s=>String(s.id)===String(id)||String(s.code)===String(id)),name=st?`${st.prefix||''}${st.fname||''} ${st.lname||''}`.trim():`ไม่พบรายชื่อ ${id}`;if(groups[status])groups[status].push({name:name,code:st&&(st.code||st.id)||id});});
-            const rows=Object.keys(labels).filter(k=>k!=='ma'&&groups[k].length).map(k=>groups[k].map((item,i)=>`<tr><td style="width:15mm;text-align:center">${i+1}</td><td style="width:32mm;text-align:center">${escapeAttendanceHtml(item.code||'-')}</td><td>${escapeAttendanceHtml(item.name)}</td><td style="width:35mm;text-align:center">${labels[k]}</td></tr>`).join('')).join('');
-            const total=Object.values(groups).reduce((n,a)=>n+a.length,0),roomLabel=classroomDisplay(room,roomLevelHint(room));const body=`<header class="document-head"><h1>${escapeAttendanceHtml(schoolSettings.schoolName||'โรงเรียน')}</h1><h2>รายงานสรุปการเช็กชื่อรายคาบ</h2></header><div class="document-meta">วิชา <strong>${escapeAttendanceHtml(subject)}</strong> &nbsp; คาบ ${escapeAttendanceHtml(period)} &nbsp; ชั้น/ห้อง ${escapeAttendanceHtml(roomLabel)} &nbsp; วันที่ ${escapeAttendanceHtml(date)}</div><div class="summary-grid">${Object.keys(labels).map(k=>`<div class="summary-box">${labels[k]}<strong>${groups[k].length}</strong>คน</div>`).join('')}</div><p><strong>จำนวนนักเรียนที่บันทึกทั้งหมด ${total} คน</strong></p><table><thead><tr><th>ลำดับ</th><th>เลขประจำตัว</th><th>ชื่อ–นามสกุล</th><th>สถานะ</th></tr></thead><tbody>${rows||'<tr><td colspan="4" style="text-align:center">มาเรียนครบทุกคน</td></tr>'}</tbody></table><div class="signature"><div>ลงชื่อ ................................................ ผู้สอน<br>(................................................)</div><div>ลงชื่อ ................................................ ผู้รับรอง<br>(................................................)</div></div><div class="footer">พิมพ์เมื่อ ${escapeAttendanceHtml(new Date().toLocaleString('th-TH'))}</div>`;
+            Object.entries(rec).forEach(([id,data])=>{const status=typeof data==='string'?data:data.status,source=allStudents.length?allStudents:students,st=source.find(s=>String(s.id)===String(id)||String(s.code)===String(id)),name=st?`${st.prefix||''}${st.fname||''} ${st.lname||''}`.trim():`ไม่พบรายชื่อ ${id}`;if(groups[status])groups[status].push({name:name,code:st&&(st.code||st.id)||id,no:st?studentNumber(st):'-'});});
+            const rows=Object.keys(labels).filter(k=>k!=='ma'&&groups[k].length).map(k=>groups[k].sort(function(a,b){return(Number(a.no)||999)-(Number(b.no)||999);}).map(item=>`<tr><td style="width:15mm;text-align:center">${escapeAttendanceHtml(item.no||'-')}</td><td style="width:32mm;text-align:center">${escapeAttendanceHtml(item.code||'-')}</td><td>${escapeAttendanceHtml(item.name)}</td><td style="width:35mm;text-align:center">${labels[k]}</td></tr>`).join('')).join('');
+            const total=Object.values(groups).reduce((n,a)=>n+a.length,0),roomLabel=classroomDisplay(room,roomLevelHint(room));const body=`<header class="document-head"><h1>${escapeAttendanceHtml(schoolSettings.schoolName||'โรงเรียน')}</h1><h2>รายงานสรุปการเช็กชื่อรายคาบ</h2></header><div class="document-meta">วิชา <strong>${escapeAttendanceHtml(subject)}</strong> &nbsp; คาบ ${escapeAttendanceHtml(period)} &nbsp; ชั้น/ห้อง ${escapeAttendanceHtml(roomLabel)} &nbsp; วันที่ ${escapeAttendanceHtml(date)}</div><div class="summary-grid">${Object.keys(labels).map(k=>`<div class="summary-box">${labels[k]}<strong>${groups[k].length}</strong>คน</div>`).join('')}</div><p><strong>จำนวนนักเรียนที่บันทึกทั้งหมด ${total} คน</strong></p><table><thead><tr><th>เลขที่</th><th>เลขประจำตัว</th><th>ชื่อ–นามสกุล</th><th>สถานะ</th></tr></thead><tbody>${rows||'<tr><td colspan="4" style="text-align:center">มาเรียนครบทุกคน</td></tr>'}</tbody></table><div class="signature"><div>ลงชื่อ ................................................ ผู้สอน<br>(................................................)</div><div>ลงชื่อ ................................................ ผู้รับรอง<br>(................................................)</div></div><div class="footer">พิมพ์เมื่อ ${escapeAttendanceHtml(new Date().toLocaleString('th-TH'))}</div>`;
             openOfficialPrintDocument('สรุปเช็กชื่อ '+room+' '+date,body);
         }
 
@@ -3270,7 +3279,7 @@
 
             const key = `${date}_${period}_${subj}_${room}`;
             const saved = attendanceHistory[key] || {};
-            const list = students.filter(s => s.room === room).sort((a,b)=> a.id - b.id);
+            const list = students.filter(s => s.room === room).sort(studentRosterSort);
             
             document.getElementById('attRoomCount').innerText = list.length;
             const container = document.getElementById('attendanceList');
@@ -3289,7 +3298,7 @@
                 return `
                 <div class="flex flex-col md:flex-row items-center py-3 px-4 hover:bg-purple-50/50 transition student-att-row border-b border-gray-100" data-id="${s.id}" data-code="${escapeStudentQuizText(s.code)}" data-check-method="${typeof record==='string'?'manual':escapeStudentQuizText(record.checkMethod||'manual')}" data-checked-at="${typeof record==='string'?'':escapeStudentQuizText(record.checkedAt||'')}">
                     <div class="flex items-center w-full md:w-auto md:flex-1 mb-2 md:mb-0">
-                        <div class="w-12 text-center font-bold text-gray-400">${s.code.slice(-2)}</div>
+                        <div class="w-12 text-center font-bold text-purple-600" title="เลขที่">${studentNumber(s)}</div>
                         <div class="flex-1 font-bold text-gray-800 text-sm truncate">${s.prefix}${s.fname} ${s.lname}</div>
                     </div>
                     <div class="w-full md:w-[320px] flex justify-center space-x-1">
@@ -3559,7 +3568,7 @@
             document.getElementById('reportRoomText').innerText = roomF==='all'?'ทั้งหมด':roomF;
             
             const source = allStudents.length ? allStudents : students;
-            let list = source.filter(s => (levelF==='all'||studentLevel(s)===levelF) && (roomF==='all'||String(s.room)===String(roomF)));
+            let list = source.filter(s => (levelF==='all'||studentLevel(s)===levelF) && (roomF==='all'||String(s.room)===String(roomF))).sort(function(a,b){return String(a.room||'').localeCompare(String(b.room||''),'th',{numeric:true})||studentRosterSort(a,b);});
             document.getElementById('reportTableBody').innerHTML = list.map((st, i) => {
                 let ma=0, khad=0, puay=0, kij=0, sai=0;
                 Object.values(attendanceHistory).forEach(rec => { 
@@ -3573,7 +3582,7 @@
                 const percent = total===0 ? 0 : Math.round(((ma+sai)/total)*100);
                 return `
                 <tr class="border-b">
-                    <td class="p-2 border border-gray-300">${i+1}</td>
+                    <td class="p-2 border border-gray-300">${studentNumber(st)}</td>
                     <td class="p-2 border border-gray-300">${st.code}</td>
                     <td class="p-2 border border-gray-300 text-left">${profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||''))}</td>
                     <td class="p-2 border border-gray-300">${ma}</td>
@@ -3746,16 +3755,17 @@
         }
         
         function renderRoomStudents() { 
-            const list = students.filter(s => s.room === currentManagingRoom).sort((a,b) => a.id - b.id); 
+            const source=allStudents.length?allStudents:students, list = source.filter(s => s.room === currentManagingRoom).sort(studentRosterSort); 
             document.getElementById('manageRoomCount').innerText = list.length; 
             const tbody = document.getElementById('manageRoomTableBody'); 
             if(list.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="3" class="text-center py-8 text-gray-400">ยังไม่มีนักเรียนในห้องนี้</td></tr>'; 
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-8 text-gray-400">ยังไม่มีนักเรียนในห้องนี้</td></tr>'; 
                 return; 
             } 
             tbody.innerHTML = list.map((st, idx) => `
                 <tr class="hover:bg-purple-50 transition-colors">
-                    <td class="p-3 text-center text-gray-500 font-medium">${st.code.slice(-2)}</td>
+                    <td class="p-3 text-center text-purple-700 font-bold">${profileEsc(studentNumber(st))}</td>
+                    <td class="p-3 text-center text-gray-500 font-medium">${profileEsc(st.code)}</td>
                     <td class="p-3 font-bold text-gray-800">${st.prefix}${st.fname} ${st.lname}</td>
                     <td class="p-3 text-center space-x-1">
                         <button onclick="editStudentInRoom(${st.id})" class="text-indigo-500 hover:bg-indigo-100 p-1.5 rounded" title="แก้ไข"><i class="fas fa-edit"></i></button>
@@ -3763,13 +3773,25 @@
                     </td>
                 </tr>`).join(''); 
         }
+
+        async function assignStudentNumbersCurrentRoom(){
+            const source=allStudents.length?allStudents:students,list=source.filter(function(st){return st.room===currentManagingRoom;}).sort(function(a,b){var byName=String(a.fname||'').localeCompare(String(b.fname||''),'th');return byName||String(a.lname||'').localeCompare(String(b.lname||''),'th')||String(a.code||'').localeCompare(String(b.code||''),'th',{numeric:true});});
+            if(!list.length)return Swal.fire('ยังไม่มีนักเรียนในห้องนี้','','info');
+            const answer=await Swal.fire({icon:'question',title:'จัดเลขที่ใหม่ทั้งห้อง?',html:'ระบบจะเรียงตามชื่อและกำหนดเลขที่ <b>1–'+list.length+'</b><br><small class="text-gray-500">เลขที่เดิมของห้อง '+profileEsc(classroomDisplay(currentManagingRoom,roomLevelHint(currentManagingRoom)))+' จะถูกแทนที่</small>',showCancelButton:true,confirmButtonText:'จัดเลขที่',cancelButtonText:'ยกเลิก',confirmButtonColor:'#d97706'});
+            if(!answer.isConfirmed)return;
+            list.forEach(function(st,index){st.no=index+1;});
+            await syncDataToServer();renderRoomStudents();renderSettingsStudentList();
+            Swal.fire({toast:true,position:'top-end',icon:'success',title:'จัดเลขที่ '+list.length+' คนแล้ว',showConfirmButton:false,timer:1600});
+        }
         
         async function addStudentToCurrentRoom() { 
+            const studentSource=allStudents.length?allStudents:students,existingNos=studentSource.filter(function(st){return st.room===currentManagingRoom;}).map(function(st){return Number(studentNumber(st))||0;}),nextRoomNo=(existingNos.length?Math.max.apply(null,existingNos):0)+1;
             const res = await Swal.fire({ 
                 title: 'เพิ่มนักเรียน', 
                 html: `
                     <div class="text-left space-y-3">
                         <input id="swStCode" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-purple-500 text-sm" placeholder="รหัสนักเรียน 5 หลัก">
+                        <input id="swStNo" type="number" min="1" step="1" value="${nextRoomNo}" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-purple-500 text-sm" placeholder="เลขที่ในห้อง">
                         <select id="swStPrefix" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-purple-500 text-sm">
                             <option value="ด.ช.">ด.ช.</option>
                             <option value="ด.ญ.">ด.ญ.</option>
@@ -3784,21 +3806,24 @@
                 showCancelButton: true, confirmButtonText: 'เพิ่ม', confirmButtonColor: '#7c3aed', 
                 preConfirm: () => { 
                     const code = document.getElementById('swStCode').value.trim(); 
+                    const no = document.getElementById('swStNo').value.trim();
                     const prefix = document.getElementById('swStPrefix').value; 
                     const fname = document.getElementById('swStFname').value.trim(); 
                     const lname = document.getElementById('swStLname').value.trim(); 
                     const level = document.getElementById('swStLevel').value.trim();
                     const room = document.getElementById('swStRoom').value;
-                    if(!code || !fname || !lname || !level || !room) return Swal.showValidationMessage('กรอกข้อมูลให้ครบถ้วน'); 
-                    if(students.find(s => s.code === code)) return Swal.showValidationMessage('รหัสนักเรียนซ้ำในระบบ'); 
-                    return {code, prefix, fname, lname, level, room}; 
+                    if(!code || !no || !fname || !lname || !level || !room) return Swal.showValidationMessage('กรอกข้อมูลให้ครบถ้วน รวมถึงเลขที่'); 
+                    if(!/^\d+$/.test(no)||Number(no)<1) return Swal.showValidationMessage('เลขที่ต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป');
+                    if(duplicateStudentNumber(no,room,'')) return Swal.showValidationMessage('เลขที่นี้ถูกใช้ในห้องเรียนแล้ว');
+                    if(studentSource.find(s => s.code === code)) return Swal.showValidationMessage('รหัสนักเรียนซ้ำในระบบ'); 
+                    return {code, no:Number(no), prefix, fname, lname, level, room}; 
                 } 
             }); 
             if(res.isConfirmed) { 
                 const v = res.value; 
-                const newId = students.length > 0 ? Math.max(...students.map(s => s.id)) + 1 : 1; 
+                const newId = studentSource.length > 0 ? Math.max(...studentSource.map(s => Number(s.id)||0)) + 1 : 1; 
                 students.push({ 
-                    id: newId, code: v.code, prefix: v.prefix, fname: v.fname, lname: v.lname, 
+                    id: newId, code: v.code, no: v.no, prefix: v.prefix, fname: v.fname, lname: v.lname, 
                     class: v.level, room: v.room, year: schoolSettings.year, term: schoolSettings.term, score: 100 
                 }); 
                 await syncDataToServer(); 
@@ -3809,7 +3834,7 @@
         }
         
         async function editStudentInRoom(id) { 
-            const st = students.find(s => s.id === id); 
+            const studentSource=allStudents.length?allStudents:students,st = studentSource.find(s => s.id === id); 
             if(!st) return; 
             const res = await Swal.fire({ 
                 title: 'แก้ไขข้อมูลนักเรียน', 
@@ -3817,6 +3842,8 @@
                     <div class="text-left space-y-3">
                         <label class="block text-xs font-bold text-gray-500">รหัสนักเรียน</label>
                         <input id="swStCode" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-purple-500 text-sm" value="${st.code}">
+                        <label class="block text-xs font-bold text-gray-500">เลขที่ในห้อง</label>
+                        <input id="swStNo" type="number" min="1" step="1" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-purple-500 text-sm" value="${studentNumber(st)==='-'?'':profileEsc(studentNumber(st))}">
                         <label class="block text-xs font-bold text-gray-500">คำนำหน้า</label>
                         <select id="swStPrefix" class="w-full px-3 py-2 border rounded-lg outline-none focus:border-purple-500 text-sm">
                             <option value="ด.ช." ${st.prefix==='ด.ช.'?'selected':''}>ด.ช.</option>
@@ -3834,21 +3861,25 @@
                 showCancelButton: true, confirmButtonText: 'บันทึก', confirmButtonColor: '#7c3aed', 
                 preConfirm: () => { 
                     const code = document.getElementById('swStCode').value.trim(); 
+                    const no = document.getElementById('swStNo').value.trim();
                     const prefix = document.getElementById('swStPrefix').value; 
                     const fname = document.getElementById('swStFname').value.trim(); 
                     const lname = document.getElementById('swStLname').value.trim(); 
                     const level = document.getElementById('swStLevel').value.trim();
                     const room = document.getElementById('swStRoom').value;
-                    if(!code || !fname || !lname || !level || !room) return Swal.showValidationMessage('กรอกข้อมูลให้ครบถ้วน'); 
-                    const dup = students.find(s => s.code === code && s.id !== id); 
+                    if(!code || !no || !fname || !lname || !level || !room) return Swal.showValidationMessage('กรอกข้อมูลให้ครบถ้วน รวมถึงเลขที่'); 
+                    if(!/^\d+$/.test(no)||Number(no)<1) return Swal.showValidationMessage('เลขที่ต้องเป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไป');
+                    if(duplicateStudentNumber(no,room,id)) return Swal.showValidationMessage('เลขที่นี้ถูกใช้ในห้องเรียนแล้ว');
+                    const dup = studentSource.find(s => s.code === code && s.id !== id); 
                     if(dup) return Swal.showValidationMessage('รหัสนักเรียนนี้ถูกใช้แล้ว'); 
-                    return {code, prefix, fname, lname, level, room}; 
+                    return {code, no:Number(no), prefix, fname, lname, level, room}; 
                 } 
             }); 
             if(res.isConfirmed) { 
                 const v = res.value; 
                 const oldCode = st.code; 
                 st.code = v.code; 
+                st.no = v.no;
                 st.prefix = v.prefix; 
                 st.fname = v.fname; 
                 st.lname = v.lname; 
@@ -3891,17 +3922,18 @@
             const roomF = document.getElementById('settingsRoomFilter').value;
             let list = students;
             if(roomF !== 'all') list = list.filter(s => s.room === roomF);
-            list = list.sort((a,b) => a.id - b.id);
+            list = list.slice().sort(function(a,b){return String(a.room||'').localeCompare(String(b.room||''),'th',{numeric:true})||studentRosterSort(a,b);});
             const tbody = document.getElementById('settingsStudentTableBody');
             
             if(list.length === 0) { 
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-6 text-gray-400">ไม่พบรายชื่อนักเรียน</td></tr>'; 
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-gray-400">ไม่พบรายชื่อนักเรียน</td></tr>'; 
                 return; 
             }
             
             tbody.innerHTML = list.map(st => `
                 <tr class="hover:bg-gray-50 transition-colors">
-                    <td class="p-3 text-center text-gray-500 font-medium">${st.code}</td>
+                    <td class="p-3 text-center text-purple-700 font-bold">${profileEsc(studentNumber(st))}</td>
+                    <td class="p-3 text-center text-gray-500 font-medium">${profileEsc(st.code)}</td>
                     <td class="p-3 font-bold text-gray-800">${st.prefix}${st.fname} ${st.lname}</td>
                     <td class="p-3 text-center text-purple-600 font-bold">${st.room}</td>
                     <td class="p-3 text-center space-x-1">
@@ -3913,7 +3945,7 @@
         }
 
         function downloadCSVTemplate() { 
-            const csv = '\uFEFFรหัส,คำนำหน้า,ชื่อ,นามสกุล,ชั้น,ห้อง,ปีการศึกษา,ภาคเรียน\n50001,ด.ช.,ทดสอบ,ระบบ,ป.5,ป.5/1,2569,1\n'; 
+            const csv = '\uFEFFเลขประจำตัว,เลขที่,คำนำหน้า,ชื่อ,นามสกุล,ชั้น,ห้อง,ปีการศึกษา,ภาคเรียน\n50001,1,ด.ช.,ทดสอบ,ระบบ,ม.4,ม.4/1,2569,1\n'; 
             const a = document.createElement('a'); 
             a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'})); 
             a.download = 'template.csv'; 
@@ -3929,27 +3961,34 @@
             if(!file) return Swal.fire('แจ้งเตือน', 'เลือกไฟล์ก่อน', 'warning');
             const reader = new FileReader();
             reader.onload = async e => {
-                const lines = e.target.result.split(/\r\n|\n/); 
+                const lines = e.target.result.replace(/^\uFEFF/,'').split(/\r\n|\n/); 
                 let added = 0; 
                 let skipped = 0; 
                 const existingCodes = new Set(students.map(s => s.code));
+                const parseLine = line => { let cols=line.split(',');if(cols.length<6)cols=line.split(';');return cols.map(x=>x.trim().replace(/^"|"$/g,'')); };
+                const header=parseLine(lines[0]||'').map(x=>x.replace(/\s+/g,''));
+                const findIndex = names => { for(const name of names){const index=header.indexOf(name);if(index>=0)return index;}return -1; };
+                const indexes={code:findIndex(['เลขประจำตัว','รหัส','รหัสนักเรียน']),no:findIndex(['เลขที่']),prefix:findIndex(['คำนำหน้า']),fname:findIndex(['ชื่อ','ชื่อจริง']),lname:findIndex(['นามสกุล']),level:findIndex(['ชั้น','ระดับชั้น']),room:findIndex(['ห้อง','ห้องเรียน']),year:findIndex(['ปีการศึกษา','ปี']),term:findIndex(['ภาคเรียน','ภาค','เทอม'])};
+                if(indexes.code<0||indexes.prefix<0||indexes.fname<0||indexes.lname<0||indexes.level<0||indexes.room<0)return Swal.fire('รูปแบบไฟล์ไม่ถูกต้อง','กรุณาใช้ไฟล์แม่แบบล่าสุด ซึ่งต้องมีเลขประจำตัว เลขที่ ชื่อ และชั้น/ห้อง','error');
+                const usedByRoom={};students.forEach(function(st){var room=String(st.room||''),no=studentNumber(st);if(no!=='-'){(usedByRoom[room]||(usedByRoom[room]=new Set())).add(String(no));}});
                 
                 for(let i=1; i<lines.length; i++) {
                     if (!lines[i].trim()) continue;
-                    let c = lines[i].split(','); 
-                    if(c.length < 6) c = lines[i].split(';'); 
-                    c = c.map(x => x.trim().replace(/^"|"$/g, ''));
+                    const c = parseLine(lines[i]);
                     
                     if(c.length >= 6) {
-                        if (!existingCodes.has(c[0])) {
+                        const code=String(c[indexes.code]||'').trim(),room=String(c[indexes.room]||'').trim();
+                        if (code&&!existingCodes.has(code)) {
+                            const used=usedByRoom[room]||(usedByRoom[room]=new Set());let no=indexes.no>=0?String(c[indexes.no]||'').trim():'';
+                            if(!/^\d+$/.test(no)||Number(no)<1||used.has(String(Number(no)))){let candidate=1;while(used.has(String(candidate)))candidate++;no=String(candidate);}no=String(Number(no));used.add(no);
                             const nextId = students.length ? Math.max(...students.map(s=>Number(s.id)||0)) + 1 : 1;
                             students.push({ 
-                                id: nextId, code: c[0], prefix: c[1], fname: c[2], lname: c[3], 
-                                class: c[4], room: c[5], year: c[6] || schoolSettings.year, 
-                                term: c[7] || schoolSettings.term, score: 100 
+                                id: nextId, code: code, no: Number(no), prefix: c[indexes.prefix]||'', fname: c[indexes.fname]||'', lname: c[indexes.lname]||'', 
+                                class: c[indexes.level]||'', room: room, year: (indexes.year>=0&&c[indexes.year]) || schoolSettings.year, 
+                                term: (indexes.term>=0&&c[indexes.term]) || schoolSettings.term, score: 100 
                             });
-                            existingCodes.add(c[0]); 
-                            if(!classrooms.includes(c[5])) classrooms.push(c[5]); 
+                            existingCodes.add(code); 
+                            if(room&&!classrooms.includes(room)) classrooms.push(room); 
                             added++;
                         } else {
                             skipped++;
@@ -3978,7 +4017,7 @@
         }
         
         function exportStudentsCSV() { 
-            const csv = '\uFEFF' + [['ลำดับ','รหัส','คำนำหน้า','ชื่อ','นามสกุล','ชั้น','ห้อง','ปี','ภาค','คะแนน'].join(','), ...students.map(s => [s.id, s.code, s.prefix, s.fname, s.lname, s.class, s.room, s.year, s.term, s.score].join(','))].join('\n'); 
+            const csv = '\uFEFF' + [['เลขประจำตัว','เลขที่','คำนำหน้า','ชื่อ','นามสกุล','ชั้น','ห้อง','ปี','ภาค','คะแนน'].join(','), ...students.slice().sort((a,b)=>String(a.room||'').localeCompare(String(b.room||''),'th',{numeric:true})||studentRosterSort(a,b)).map(s => [s.code, studentNumber(s)==='-'?'':studentNumber(s), s.prefix, s.fname, s.lname, s.class, s.room, s.year, s.term, s.score].join(','))].join('\n'); 
             const a = document.createElement('a'); 
             a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv;charset=utf-8;'})); 
             a.download = 'students.csv'; 
@@ -4571,7 +4610,7 @@ async function printStudentQRCards(){
     if(typeof QRCode==='undefined')return Swal.fire('สร้าง QR ไม่สำเร็จ','โหลดเครื่องมือสร้าง QR ไม่สำเร็จ','error');
     var printWindow=window.open('','_blank');if(!printWindow)return Swal.fire('เปิดหน้าพิมพ์ไม่ได้','กรุณาอนุญาต Pop-up ของเว็บไซต์','warning');
     var temp=document.createElement('div');temp.style.cssText='position:fixed;left:-10000px;top:0';document.body.appendChild(temp);var cards=[];
-    list.forEach(function(student,index){var holder=document.createElement('div');temp.appendChild(holder);new QRCode(holder,{text:buildStudentQRValue(student),width:150,height:150,correctLevel:QRCode.CorrectLevel.H});var canvas=holder.querySelector('canvas'),img=holder.querySelector('img'),src=canvas?canvas.toDataURL('image/png'):(img?img.src:'');var name=(student.prefix||'')+(student.fname||'')+' '+(student.lname||'');cards.push('<div class="card"><img src="'+src+'"><b>'+profileEsc(name)+'</b><span>เลขประจำตัว '+profileEsc(student.code)+' · '+profileEsc(classroomDisplay(student.room,studentLevel(student)))+'</span><small>'+profileEsc(schoolSettings.schoolName||'')+' · '+profileEsc(schoolSettings.term)+'/'+profileEsc(schoolSettings.year)+'</small></div>');});temp.remove();
+    list.forEach(function(student,index){var holder=document.createElement('div');temp.appendChild(holder);new QRCode(holder,{text:buildStudentQRValue(student),width:150,height:150,correctLevel:QRCode.CorrectLevel.H});var canvas=holder.querySelector('canvas'),img=holder.querySelector('img'),src=canvas?canvas.toDataURL('image/png'):(img?img.src:'');var name=(student.prefix||'')+(student.fname||'')+' '+(student.lname||'');cards.push('<div class="card"><img src="'+src+'"><b>'+profileEsc(name)+'</b><span>เลขที่ '+profileEsc(studentNumber(student))+' · เลขประจำตัว '+profileEsc(student.code)+'</span><small>'+profileEsc(classroomDisplay(student.room,studentLevel(student)))+' · '+profileEsc(schoolSettings.term)+'/'+profileEsc(schoolSettings.year)+'</small></div>');});temp.remove();
     var roomLabel=classroomDisplay(room,level);
     printWindow.document.write('<!doctype html><html lang="th"><head><meta charset="utf-8"><title>QR นักเรียน '+profileEsc(roomLabel)+'</title><style>@import url("https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap");@page{size:A4;margin:15mm}*{box-sizing:border-box}body{font-family:"TH Sarabun New","TH SarabunPSK","TH Sarabun PSK","Sarabun",sans-serif;margin:0;color:#000}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7mm}.card{border:.5pt dashed #555;padding:3mm;text-align:center;break-inside:avoid;display:flex;flex-direction:column;align-items:center}.card img{width:34mm;height:34mm}.card b{font-size:16pt;line-height:1.05;margin-top:2mm}.card span{font-size:14pt;line-height:1.05;margin-top:1mm}.card small{font-size:12pt;line-height:1.05;margin-top:1mm}.head{text-align:center;margin-bottom:7mm}.head h1{font-size:20pt;line-height:1.1;margin:0}.head p{font-size:16pt;margin:1mm}</style></head><body><div class="head"><h1>'+profileEsc(schoolSettings.schoolName||'โรงเรียน')+'</h1><p>บัตร QR นักเรียน · '+profileEsc(roomLabel)+' · ภาคเรียน '+profileEsc(schoolSettings.term)+'/'+profileEsc(schoolSettings.year)+'</p></div><div class="grid">'+cards.join('')+'</div><script>window.addEventListener("load",function(){setTimeout(function(){window.print()},350)})<\/script></body></html>');printWindow.document.close();
 }
@@ -4860,12 +4899,12 @@ async function scanQRCenterImage(event){var f=event.target.files&&event.target.f
 function manualQRCenterScan(){var input=document.getElementById('qrCenterManual');if(!input||!input.value.trim())return;handleQRCenterValue(input.value.trim());input.value='';}
 async function handleQRCenterValue(raw){var now=Date.now();if(raw===qrCenterLastValue&&now-qrCenterLastTime<1800)return;qrCenterLastValue=raw;qrCenterLastTime=now;var parsed=parseStudentQRValue(raw),st=qrCenterStudent(parsed.code),status=document.getElementById('qrCenterStatus');if(!st){if(status)status.innerHTML='<span class="text-rose-600 font-bold">ไม่พบนักเรียนรหัส '+profileEsc(parsed.code)+'</span>';else Swal.fire('ไม่พบนักเรียน','รหัส '+parsed.code,'error');return;}try{await applyQRCenterAction(st);var msg='<span class="text-emerald-700 font-bold"><i class="fas fa-check-circle mr-1"></i>'+profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||''))+'</span><br><small>'+qrCenterModeLabel(document.getElementById('qrCenterMode').value)+' · '+new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+'</small>';if(status)status.innerHTML=msg;else Swal.fire({toast:true,position:'top-end',icon:'success',title:'บันทึกแล้ว',showConfirmButton:false,timer:1400});}catch(e){if(status)status.innerHTML='<span class="text-rose-600 font-bold">'+profileEsc(e.message||String(e))+'</span>';else Swal.fire('บันทึกไม่สำเร็จ',e.message||String(e),'error');}}
 async function applyQRCenterAction(st){var error=qrCenterValidateSettings();if(error)throw new Error(error);var mode=document.getElementById('qrCenterMode').value,id='qr_'+Date.now()+'_'+Math.floor(Math.random()*1000),event={id:id,studentCode:st.code,stId:st.id,room:st.room,mode:mode,date:new Date().toISOString(),voided:false};if(mode==='enter'||mode==='exit'){event.building=Number(document.getElementById('qrCenterBuilding').value);event.location=document.getElementById('qrCenterRoom').value.trim();}else if(mode.indexOf('behavior_')===0){var sign=mode==='behavior_plus'?1:-1,points=Number(document.getElementById('qrCenterPoints').value);event.reason=document.getElementById('qrCenterReason').value.trim();event.points=sign*points;event.behaviorId='beh_'+id;st.score=(Number(st.score)||0)+event.points;behaviorRecords.unshift({id:event.behaviorId,stId:st.id,studentCode:st.code,date:new Date().toLocaleDateString('th-TH'),topic:event.reason,change:event.points,source:'qr'});}else if(mode==='assignment'){var catId=document.getElementById('qrCenterAssignment').value,cat=(ahCategories||[]).find(function(c){return String(c.id)===String(catId);});event.catId=catId;event.assignmentLabel=cat?(cat.label||cat.title||catId):catId;event.previousSubmission=null;var ix=ahSubmissions.findIndex(function(s){return String(s.catId)===String(catId)&&String(s.studentCode)===String(st.code);});if(ix>=0)event.previousSubmission=JSON.parse(JSON.stringify(ahSubmissions[ix]));var sub={id:'sub_'+Date.now()+'_'+Math.floor(Math.random()*1000),catId:catId,studentCode:st.code,room:st.room,files:[],caption:'เช็กส่งงานด้วย QR',date:new Date().toISOString(),status:'pending',comment:'',source:'qr',qrEventId:id};if(ix>=0)ahSubmissions[ix]=sub;else ahSubmissions.unshift(sub);event.submissionId=sub.id;}qrEvents.unshift(event);await syncDataToServer(null,true);renderQRCenterHistory();updateDashboardStats();}
-function renderQRCenterHistory(){var box=document.getElementById('qrCenterHistory'),count=document.getElementById('qrCenterTodayCount');if(!box)return;var today=getLocalISODate(),list=(qrEvents||[]).filter(function(e){return String(e.date||'').slice(0,10)===today;});if(count)count.textContent=list.filter(function(e){return !e.voided;}).length+' รายการ';box.innerHTML=list.slice(0,100).map(function(e){var st=qrCenterStudent(e.studentCode)||{},detail=e.mode==='enter'||e.mode==='exit'?'อาคาร '+(e.building||'-')+(e.location?' · '+profileEsc(e.location):''):e.mode.indexOf('behavior_')===0?((e.points>0?'+':'')+e.points+' · '+profileEsc(e.reason||'')):profileEsc(e.assignmentLabel||'');return '<div class="p-4 flex items-center gap-3 '+(e.voided?'opacity-45 bg-slate-50':'')+'"><span class="w-10 h-10 rounded-xl '+(e.mode==='exit'?'bg-orange-50 text-orange-600':e.mode.indexOf('behavior_')===0?'bg-amber-50 text-amber-600':e.mode==='assignment'?'bg-blue-50 text-blue-600':'bg-emerald-50 text-emerald-600')+' grid place-items-center"><i class="fas '+(e.mode==='assignment'?'fa-clipboard-check':e.mode.indexOf('behavior_')===0?'fa-star':'fa-door-open')+'"></i></span><div class="flex-1 min-w-0"><b class="block text-sm text-slate-800">'+profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||e.studentCode||''))+'</b><small class="text-slate-500">'+qrCenterModeLabel(e.mode)+' · '+detail+' · '+new Date(e.date).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+'</small></div>'+(e.voided?'<span class="text-xs font-bold text-slate-400">ยกเลิกแล้ว</span>':'<button onclick="undoQRCenterEvent(\''+e.id+'\')" class="px-3 py-2 rounded-lg bg-rose-50 text-rose-600 text-xs font-bold">ยกเลิก</button>')+'</div>';}).join('')||'<div class="py-16 text-center text-slate-400"><i class="fas fa-qrcode text-4xl mb-3 block"></i>ยังไม่มีรายการสแกนวันนี้</div>';}
+function renderQRCenterHistory(){var box=document.getElementById('qrCenterHistory'),count=document.getElementById('qrCenterTodayCount');if(!box)return;var today=getLocalISODate(),list=(qrEvents||[]).filter(function(e){return String(e.date||'').slice(0,10)===today;});if(count)count.textContent=list.filter(function(e){return !e.voided;}).length+' รายการ';box.innerHTML=list.slice(0,100).map(function(e){var st=qrCenterStudent(e.studentCode)||{},detail=e.mode==='enter'||e.mode==='exit'?'อาคาร '+(e.building||'-')+(e.location?' · '+profileEsc(e.location):''):e.mode.indexOf('behavior_')===0?((e.points>0?'+':'')+e.points+' · '+profileEsc(e.reason||'')):profileEsc(e.assignmentLabel||'');return '<div class="p-4 flex items-center gap-3 '+(e.voided?'opacity-45 bg-slate-50':'')+'"><span class="w-10 h-10 rounded-xl '+(e.mode==='exit'?'bg-orange-50 text-orange-600':e.mode.indexOf('behavior_')===0?'bg-amber-50 text-amber-600':e.mode==='assignment'?'bg-blue-50 text-blue-600':'bg-emerald-50 text-emerald-600')+' grid place-items-center"><i class="fas '+(e.mode==='assignment'?'fa-clipboard-check':e.mode.indexOf('behavior_')===0?'fa-star':'fa-door-open')+'"></i></span><div class="flex-1 min-w-0"><b class="block text-sm text-slate-800">'+profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||e.studentCode||''))+'</b><small class="text-slate-500">เลขที่ '+profileEsc(studentNumber(st))+' · '+qrCenterModeLabel(e.mode)+' · '+detail+' · '+new Date(e.date).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})+'</small></div>'+(e.voided?'<span class="text-xs font-bold text-slate-400">ยกเลิกแล้ว</span>':'<button onclick="undoQRCenterEvent(\''+e.id+'\')" class="px-3 py-2 rounded-lg bg-rose-50 text-rose-600 text-xs font-bold">ยกเลิก</button>')+'</div>';}).join('')||'<div class="py-16 text-center text-slate-400"><i class="fas fa-qrcode text-4xl mb-3 block"></i>ยังไม่มีรายการสแกนวันนี้</div>';}
 async function undoQRCenterEvent(id){var e=qrEvents.find(function(x){return x.id===id;});if(!e||e.voided)return;var answer=await Swal.fire({icon:'warning',title:'ยกเลิกรายการนี้?',text:'ระบบจะย้อนผลคะแนนหรืองานที่เกิดจากการสแกนนี้',showCancelButton:true,confirmButtonText:'ยืนยันยกเลิก',cancelButtonText:'กลับ',confirmButtonColor:'#e11d48'});if(!answer.isConfirmed)return;var st=qrCenterStudent(e.studentCode);if(e.mode.indexOf('behavior_')===0){behaviorRecords=behaviorRecords.filter(function(b){return b.id!==e.behaviorId;});if(st)st.score=(Number(st.score)||0)-Number(e.points||0);}else if(e.mode==='assignment'){ahSubmissions=ahSubmissions.filter(function(s){return s.qrEventId!==e.id;});if(e.previousSubmission)ahSubmissions.unshift(e.previousSubmission);}e.voided=true;e.voidedAt=new Date().toISOString();await syncDataToServer(null,true);renderQRCenterHistory();updateDashboardStats();}
 function printStudentQRCardsFromCenter(){var room=prompt('ระบุห้องเรียนที่ต้องการพิมพ์ QR',classrooms[0]||'');if(!room)return;var select=document.getElementById('attClass');if(select){select.value=room;printStudentQRCards();}}
 function initQRPrintView(){var level=document.getElementById('qrPrintLevel');if(!level)return;var current=level.value;level.innerHTML=levelOptionsHtml().replace('value="all"','value="all"');level.value=Array.from(level.options).some(function(option){return option.value===current;})?current:'all';updateQRPrintRooms();renderQRPrintPreview();}
 function updateQRPrintRooms(){var level=(document.getElementById('qrPrintLevel')||{}).value||'all',select=document.getElementById('qrPrintRoom');if(!select)return;var source=allStudents.length?allStudents:students,current=select.value,rooms=Array.from(new Set(source.filter(function(st){return level==='all'||studentLevel(st)===level;}).map(function(st){return String(st.room||'');}).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'th',{numeric:true});});select.innerHTML='<option value="">-- เลือกชั้น/ห้อง --</option>'+rooms.map(function(room){return '<option value="'+profileEsc(room)+'">'+profileEsc(classroomDisplay(room,level==='all'?roomLevelHint(room):level))+'</option>';}).join('');select.value=rooms.indexOf(current)>=0?current:(rooms[0]||'');}
-function renderQRPrintPreview(){var level=(document.getElementById('qrPrintLevel')||{}).value||'all',room=(document.getElementById('qrPrintRoom')||{}).value||'',source=allStudents.length?allStudents:students,list=source.filter(function(st){return(level==='all'||studentLevel(st)===level)&&(!room||String(st.room)===room);}).sort(function(a,b){return(Number(a.no)||Number(a.number)||999)-(Number(b.no)||Number(b.number)||999);}),box=document.getElementById('qrPrintPreview'),count=document.getElementById('qrPrintCount');if(count)count.textContent=list.length;if(!box)return;box.innerHTML=list.length?list.map(function(st,index){return '<article class="bg-white border rounded-2xl p-4 flex items-center gap-4 shadow-sm"><div data-qr-index="'+index+'" class="w-20 h-20 shrink-0"></div><div class="min-w-0"><b class="block text-slate-800">'+profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||''))+'</b><p class="text-sm text-violet-600 mt-1">เลขประจำตัว '+profileEsc(st.code||'-')+'</p><p class="text-xs text-slate-500 mt-1">'+profileEsc(classroomDisplay(st.room,studentLevel(st)))+'</p></div></article>';}).join(''):'<div class="col-span-full py-14 text-center text-slate-400">ยังไม่มีนักเรียนในชั้น/ห้องที่เลือก</div>';if(typeof QRCode!=='undefined')Array.from(box.querySelectorAll('[data-qr-index]')).forEach(function(holder,index){var st=list[index];if(st)new QRCode(holder,{text:buildStudentQRValue(st),width:80,height:80,correctLevel:QRCode.CorrectLevel.H});});}
+function renderQRPrintPreview(){var level=(document.getElementById('qrPrintLevel')||{}).value||'all',room=(document.getElementById('qrPrintRoom')||{}).value||'',source=allStudents.length?allStudents:students,list=source.filter(function(st){return(level==='all'||studentLevel(st)===level)&&(!room||String(st.room)===room);}).sort(studentRosterSort),box=document.getElementById('qrPrintPreview'),count=document.getElementById('qrPrintCount');if(count)count.textContent=list.length;if(!box)return;box.innerHTML=list.length?list.map(function(st,index){return '<article class="bg-white border rounded-2xl p-4 flex items-center gap-4 shadow-sm"><div data-qr-index="'+index+'" class="w-20 h-20 shrink-0"></div><div class="min-w-0"><b class="block text-slate-800">'+profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||''))+'</b><p class="text-sm text-violet-600 mt-1">เลขที่ '+profileEsc(studentNumber(st))+' · เลขประจำตัว '+profileEsc(st.code||'-')+'</p><p class="text-xs text-slate-500 mt-1">'+profileEsc(classroomDisplay(st.room,studentLevel(st)))+'</p></div></article>';}).join(''):'<div class="col-span-full py-14 text-center text-slate-400">ยังไม่มีนักเรียนในชั้น/ห้องที่เลือก</div>';if(typeof QRCode!=='undefined')Array.from(box.querySelectorAll('[data-qr-index]')).forEach(function(holder,index){var st=list[index];if(st)new QRCode(holder,{text:buildStudentQRValue(st),width:80,height:80,correctLevel:QRCode.CorrectLevel.H});});}
 function printQRTabCards(){var room=(document.getElementById('qrPrintRoom')||{}).value;if(!room)return Swal.fire('กรุณาเลือกห้องเรียน','','warning');var select=document.getElementById('attClass');if(!select)return;if(!Array.from(select.options).some(function(option){return option.value===room;}))select.insertAdjacentHTML('beforeend','<option value="'+profileEsc(room)+'">'+profileEsc(classroomDisplay(room))+'</option>');select.value=room;printStudentQRCards();}
 
 var smartSchoolBuildings=[2,3,4,5,6,7,8];
@@ -4885,7 +4924,7 @@ function renderStudentDataAdmin(totalStudents){
     document.getElementById('studentDataBody').innerHTML=list.length?list.map(function(x){
         var photo=x.profileUrl?'<img src="'+profileEsc(x.profileUrl)+'" class="w-11 h-11 rounded-xl object-cover cursor-zoom-in" onclick="openProfilePhoto(event,this.src,\''+profileEsc(x.name||'รูปโปรไฟล์')+'\')" referrerpolicy="no-referrer">':'<div class="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 grid place-items-center font-bold">'+profileEsc((x.nickname||x.name||'?').slice(0,1))+'</div>';
         var address=[x.houseNo&&'เลขที่ '+x.houseNo,x.village,x.moo&&'หมู่ '+x.moo,x.subdistrict&&'ต.'+x.subdistrict,x.district&&'อ.'+x.district,x.province&&'จ.'+x.province].filter(Boolean).join(' ');
-        return '<tr><td class="p-3"><div class="flex items-center gap-3">'+photo+'<div><b>'+profileEsc(x.name||'-')+'</b><p class="text-xs text-slate-400">'+profileEsc(x.studentCode||'-')+'</p></div></div></td><td class="p-3 text-center">'+profileEsc(x.nickname||'-')+'</td><td class="p-3 text-center"><b class="block">'+profileEsc(longLevelLabel(x.level))+'</b><small class="text-slate-500">'+profileEsc(classroomDisplay(x.room,x.level))+'</small></td><td class="p-3">'+profileEsc(address||'-')+'</td><td class="p-3 text-center">'+profileEsc(x.phone||'-')+'</td><td class="p-3 text-center">'+profileEsc(x.instagram||'-')+'</td><td class="p-3">'+profileEsc([x.hobby,x.talent].filter(Boolean).join(' · ')||'-')+'</td><td class="p-3 text-center text-xs">'+(x.updatedAt?new Date(x.updatedAt).toLocaleDateString('th-TH'):'-')+'</td><td class="p-3 text-center no-print"><button type="button" onclick="openStudentIntroductionAdmin(\''+profileEsc(x.studentCode||'')+'\')" class="px-3 py-2 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 font-bold text-xs hover:bg-purple-600 hover:text-white"><i class="fas fa-pen-to-square mr-1"></i>แก้ไข</button></td></tr>';
+        return '<tr><td class="p-3"><div class="flex items-center gap-3">'+photo+'<div><b>'+profileEsc(x.name||'-')+'</b><p class="text-xs text-slate-400">เลขที่ '+profileEsc(x.no||'-')+' · เลขประจำตัว '+profileEsc(x.studentCode||'-')+'</p></div></div></td><td class="p-3 text-center">'+profileEsc(x.nickname||'-')+'</td><td class="p-3 text-center"><b class="block">'+profileEsc(longLevelLabel(x.level))+'</b><small class="text-slate-500">'+profileEsc(classroomDisplay(x.room,x.level))+'</small></td><td class="p-3">'+profileEsc(address||'-')+'</td><td class="p-3 text-center">'+profileEsc(x.phone||'-')+'</td><td class="p-3 text-center">'+profileEsc(x.instagram||'-')+'</td><td class="p-3">'+profileEsc([x.hobby,x.talent].filter(Boolean).join(' · ')||'-')+'</td><td class="p-3 text-center text-xs">'+(x.updatedAt?new Date(x.updatedAt).toLocaleDateString('th-TH'):'-')+'</td><td class="p-3 text-center no-print"><button type="button" onclick="openStudentIntroductionAdmin(\''+profileEsc(x.studentCode||'')+'\')" class="px-3 py-2 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 font-bold text-xs hover:bg-purple-600 hover:text-white"><i class="fas fa-pen-to-square mr-1"></i>แก้ไข</button></td></tr>';
     }).join(''):'<tr><td colspan="9" class="p-10 text-center text-slate-400">ไม่พบข้อมูลตามตัวกรอง</td></tr>';
 }
 function teacherMountSavedImages(){var drop=document.querySelector('.teacher-image-drop');if(!drop||document.getElementById('tpSavedImages'))return false;var section=document.createElement('div');section.id='tpSavedImages';section.className='sm:col-span-2 rounded-2xl border border-purple-100 bg-white p-4';section.innerHTML='<div class="flex items-center justify-between gap-3 mb-3"><div><b class="text-slate-700"><i class="fas fa-clock-rotate-left text-purple-500 mr-2"></i>รูปที่บันทึกไว้แล้ว</b><p class="text-xs text-slate-500 mt-1">รูปเดิมยังอยู่ครบ กดรูปเพื่อขยายและเลื่อนดูรูปอื่นได้</p></div><span class="px-3 py-1 rounded-full bg-purple-50 text-purple-700 text-xs font-bold">'+teacherEditorSavedImages.length+' รูป</span></div>'+(teacherEditorSavedImages.length?'<div class="teacher-gallery">'+teacherEditorSavedImages.map(function(url,index){return '<button type="button" data-saved-teacher-image="'+index+'" class="relative group"><img src="'+profileEsc(url)+'" loading="lazy" referrerpolicy="no-referrer" alt="ภาพผลงานที่บันทึกไว้ '+(index+1)+'"><span class="absolute inset-0 rounded-[14px] bg-black/0 group-hover:bg-black/25 grid place-items-center text-white opacity-0 group-hover:opacity-100 transition"><i class="fas fa-magnifying-glass-plus"></i></span></button>';}).join('')+'</div>':'<div class="rounded-xl bg-slate-50 py-6 text-center text-sm text-slate-400">ยังไม่มีรูปที่บันทึกไว้</div>');drop.parentNode.insertBefore(section,drop);section.querySelectorAll('[data-saved-teacher-image]').forEach(function(button){button.onclick=function(){ahOpenImageGallery(teacherEditorSavedImages);ahModalImageIndex=Number(button.dataset.savedTeacherImage)||0;ahUpdateModalView();};});var count=document.getElementById('tpImageCount');if(count)count.textContent='0 รูปใหม่ที่รออัปโหลด';return true;}
