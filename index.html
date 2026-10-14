@@ -1498,7 +1498,8 @@
             const dashSchoolName = document.getElementById('dashSchoolName');
             if(dashSchoolName) dashSchoolName.innerText = schoolSettings.schoolName || 'โรงเรียน';
             if(schoolSettings.logoUrl) {
-                const safeLogo = profileEsc(/^https:\/\//i.test(String(schoolSettings.logoUrl)) ? schoolSettings.logoUrl : '');
+                const logoCandidate=String(schoolSettings.logoUrl||'').trim();
+                const safeLogo = profileEsc(logoCandidate.toLowerCase().indexOf('https://')===0 ? logoCandidate : '');
                 if(!safeLogo) { schoolSettings.logoUrl=''; return updateSidebarLogo(); }
                 logoEl.innerHTML = `<img src="${safeLogo}" class="w-full h-full object-contain" referrerpolicy="no-referrer" onerror="this.onerror=null; this.outerHTML='<i class=\\'fas fa-check\\'></i>';">`;
                 if(dashLogo) dashLogo.innerHTML = `<img src="${safeLogo}" alt="โลโก้ ${profileEsc(schoolSettings.schoolName || 'โรงเรียน')}" class="w-full h-full object-contain" referrerpolicy="no-referrer" onerror="this.onerror=null;this.parentElement.innerHTML='<i class=\\'fas fa-school\\'></i>'">`;
@@ -3120,7 +3121,14 @@
             return table.outerHTML;
         }
         function currentFilterLabel(levelId,roomId){
-            const level=document.getElementById(levelId),room=document.getElementById(roomId),parts=[];if(level&&level.value&&level.value!=='all')parts.push('ระดับชั้น '+level.options[level.selectedIndex].text.replace(/^ระดับชั้น\s*/,''));if(room&&room.value&&room.value!=='all')parts.push('ห้อง '+room.value);return parts.join(' · ')||'ทุกระดับชั้นและทุกห้องเรียน';
+            const level=document.getElementById(levelId),room=document.getElementById(roomId),parts=[];
+            if(level&&level.value&&level.value!=='all'){
+                let label=level.options[level.selectedIndex]?level.options[level.selectedIndex].text:String(level.value);
+                if(label.indexOf('ระดับชั้น ')===0)label=label.substring('ระดับชั้น '.length);
+                parts.push('ระดับชั้น '+label);
+            }
+            if(room&&room.value&&room.value!=='all')parts.push('ห้อง '+room.value);
+            return parts.join(' · ')||'ทุกระดับชั้นและทุกห้องเรียน';
         }
         function officialPrintFooter(){return `<div class="report-note">พิมพ์เมื่อ ${escapeAttendanceHtml(new Date().toLocaleString('th-TH'))}</div>`;}
         function printSummaryReport(){
