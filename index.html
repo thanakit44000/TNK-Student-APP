@@ -4832,6 +4832,31 @@ function renderOnlineExamHub(){
     grid.innerHTML=shown.map(function(item){var lesson=item.lesson,quiz=item.quiz,disabled=item.status!=='open',schedule=[];if(item.opens)schedule.push('<i class="far fa-calendar-check mr-1"></i> เปิด '+new Date(item.opens).toLocaleString('th-TH'));if(item.closes)schedule.push('<i class="far fa-calendar-xmark mr-1"></i> ปิด '+new Date(item.closes).toLocaleString('th-TH'));if(!schedule.length)schedule.push('<i class="fas fa-infinity mr-1"></i> ไม่จำกัดช่วงเวลาสอบ');return '<article class="exam-card"><div class="exam-card-top"><span class="exam-type-icon"><i class="fas '+(typeIcon[quiz.type]||'fa-file-pen')+'"></i></span><span class="exam-status exam-status-'+item.status+'"><i class="fas '+statusIcon[item.status]+' mr-1"></i>'+statusLabel[item.status]+'</span></div><p class="text-[10px] uppercase tracking-[.13em] text-sky-600 font-bold mt-5">'+advancedQuizEsc(advancedQuizTypeLabel(quiz.type))+' · '+advancedQuizEsc(lesson.category||'บทเรียน')+'</p><h3 class="text-xl font-bold text-slate-800 mt-2 leading-snug">'+advancedQuizEsc(quiz.title||'แบบทดสอบ')+'</h3><p class="text-xs text-slate-500 mt-2 line-clamp-2">'+advancedQuizEsc(lesson.title||'')+(lesson.level?' · '+advancedQuizEsc(lesson.level):'')+'</p><div class="exam-meta-grid"><div class="exam-meta"><b>'+quiz.questions.length+'</b><span>ข้อ</span></div><div class="exam-meta"><b>'+(quiz.timeLimitMinutes||30)+'</b><span>นาที</span></div><div class="exam-meta"><b>'+(quiz.maxAttempts||1)+'</b><span>ครั้ง</span></div></div><div class="exam-schedule">'+schedule.join('<br>')+'</div><button type="button" '+(disabled?'disabled':'')+' onclick="startAdvancedQuiz(\''+advancedQuizEsc(lesson.id)+'\',\''+advancedQuizEsc(quiz.id)+'\')" class="exam-start-btn '+(disabled?'bg-slate-100 text-slate-400 cursor-not-allowed':'bg-blue-600 text-white')+'">'+(item.status==='open'?'<i class="fas fa-arrow-right-to-bracket mr-2"></i>เข้าสู่การสอบ':item.status==='upcoming'?'ยังไม่ถึงเวลาเปิด':'สิ้นสุดการสอบ')+'</button></article>';}).join('');
     var empty=document.getElementById('onlineExamEmpty');if(empty)empty.classList.toggle('hidden',shown.length>0);
 }
+
+// Basic source-code deterrence for ordinary visitors. This intentionally does
+// not block copy/paste, text selection, printing, or accessibility shortcuts.
+(function enableBasicSourceDeterrence(){
+    var lastNoticeAt=0;
+    function showProtectedNotice(){
+        var now=Date.now();
+        if(now-lastNoticeAt<2500)return;
+        lastNoticeAt=now;
+        if(typeof Swal!=='undefined')Swal.fire({toast:true,position:'top-end',icon:'info',title:'ปิดเมนูตรวจสอบซอร์สโค้ดแล้ว',showConfirmButton:false,timer:1600,timerProgressBar:true});
+    }
+    document.addEventListener('contextmenu',function(event){
+        event.preventDefault();
+        showProtectedNotice();
+    },true);
+    document.addEventListener('keydown',function(event){
+        var key=String(event.key||'').toLowerCase();
+        var commandKey=event.ctrlKey||event.metaKey;
+        var blocked=(commandKey&&key==='u')||(commandKey&&event.shiftKey&&['i','j','c'].includes(key));
+        if(!blocked)return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        showProtectedNotice();
+    },true);
+})();
 </script>
 </body>
 </html>
