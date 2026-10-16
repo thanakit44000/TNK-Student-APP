@@ -1473,6 +1473,9 @@
         };
         var teacherAuth = { username: 'teacher', password: '' };
         var teacherSessionVerified = false;
+        var TEACHER_SESSION_KEY = 'checkdee_teacher_session_v1';
+        var TEACHER_SESSION_TTL = 12 * 60 * 60 * 1000;
+        var teacherSessionLastTouch = 0;
         var classrooms = ['ป.5/1', 'ป.6/1', 'ม.1/1'];
         
         var students = [], allStudents = [], activeGlobalLevel = '';
@@ -1576,7 +1579,54 @@
             }
         }
 
+        function readTeacherSession() {
+            try {
+                const raw=sessionStorage.getItem(TEACHER_SESSION_KEY),session=raw?JSON.parse(raw):null;
+                if(!session||!session.username||!session.password||Number(session.expiresAt||0)<=Date.now()) {
+                    sessionStorage.removeItem(TEACHER_SESSION_KEY);
+                    return null;
+                }
+                return session;
+            } catch(error) { return null; }
+        }
+
+        function persistTeacherSession() {
+            if(!teacherSessionVerified||!teacherAuth.username||!teacherAuth.password)return;
+            try {
+                sessionStorage.setItem(TEACHER_SESSION_KEY,JSON.stringify({username:teacherAuth.username,password:teacherAuth.password,expiresAt:Date.now()+TEACHER_SESSION_TTL}));
+                teacherSessionLastTouch=Date.now();
+            } catch(error) { console.warn('ไม่สามารถจำสถานะครูในแท็บนี้ได้',error); }
+        }
+
+        function restoreTeacherSession() {
+            const session=readTeacherSession();
+            if(!session)return false;
+            const expectedUsername=String(teacherAuth.username||'');
+            if(expectedUsername&&expectedUsername!==String(session.username)) {
+                clearTeacherSession();
+                return false;
+            }
+            teacherAuth={username:String(session.username),password:String(session.password)};
+            teacherSessionVerified=true;
+            teacherSessionLastTouch=Date.now();
+            return true;
+        }
+
+        function clearTeacherSession() {
+            try { sessionStorage.removeItem(TEACHER_SESSION_KEY); } catch(error) {}
+            teacherSessionLastTouch=0;
+        }
+
+        function touchTeacherSession() {
+            if(!teacherSessionVerified||Date.now()-teacherSessionLastTouch<5*60*1000)return;
+            persistTeacherSession();
+        }
+
+        document.addEventListener('pointerdown',touchTeacherSession,{passive:true});
+        document.addEventListener('keydown',touchTeacherSession,{passive:true});
+
         function checkAuth(skipDashboardRefresh) {
+            if(teacherSessionVerified&&!teacherAuth.password&&!restoreTeacherSession())teacherSessionVerified=false;
             isAuth = teacherSessionVerified === true;
             document.body.classList.toggle('auth-active', isAuth);
             document.getElementById('sidebarSchoolName').innerText = schoolSettings.schoolName;
@@ -1610,6 +1660,7 @@
                 if(typeof result==='string') result=JSON.parse(result);
                 if(!result||result.status!=='success') throw new Error('ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง');
                 teacherAuth={username:username,password:password}; teacherSessionVerified=true;
+                persistTeacherSession();
                 closeLogin(); 
                 checkAuth();
                 Swal.fire({toast:true, position:'top-end', icon:'success', title:'เข้าสู่ระบบสำเร็จ', showConfirmButton:false, timer:1500});
@@ -1620,6 +1671,7 @@
         
         function teacherLogout() {
             teacherSessionVerified=false; teacherAuth.password='';
+            clearTeacherSession();
             checkAuth(); 
             switchView('dashboard');
         }
@@ -1725,7 +1777,11 @@
                             if(!Array.isArray(schoolSettings.teacherSchedule)) schoolSettings.teacherSchedule=[];
                             if(!Array.isArray(schoolSettings.periodTimes)) schoolSettings.periodTimes=[];
                         }
-                        if(data.teacherAuth) { teacherAuth = data.teacherAuth; }
+                        if(data.teacherAuth) {
+                            const loadedUsername=String(data.teacherAuth.username||teacherAuth.username||'teacher');
+                            const activePassword=teacherSessionVerified&&String(teacherAuth.username)===loadedUsername?teacherAuth.password:'';
+                            teacherAuth={username:loadedUsername,password:activePassword};
+                        }
                         if(data.classrooms) classrooms = data.classrooms;
                         if(data.students) students = data.students;
                         if(data.attendanceHistory) attendanceHistory = data.attendanceHistory;
@@ -1757,6 +1813,7 @@
                     }
                 }
                 
+                restoreTeacherSession();
                 populateGlobalOptions();
                 checkAuth(true);
                 updateSidebarLogo();
@@ -1929,7 +1986,7 @@
             deductBox.innerHTML=deducted.length?deducted.map(function(item,index){return dashboardRankingRow(item.student,item.value,index,'text-rose-600',' คะแนน');}).join(''):'<p class="py-6 text-center text-sm text-slate-400">ยังไม่มีรายการหักคะแนน</p>';
         }
 
-        var dashboardBirthdayItems=[],dashboardBirthdayLoaded=false,dashboardBirthdayLoading=false;
+        var dashboardBirthdayItems=[],dashboardBirthdayLoaded=false,dashboardBirthdayLoading=false,birthdayAnnouncementTimer=null;
         function normalizeBirthdayMonthDay(value){const text=String(value||'').trim(),match=text.match(/^(?:\d{4}-)?(\d{2})-(\d{2})$/);if(!match)return'';const month=Number(match[1]),day=Number(match[2]),check=new Date(2000,month-1,day);return check.getMonth()===month-1&&check.getDate()===day?match[1]+'-'+match[2]:'';}
         function birthdayOccurrence(monthDay){const part=normalizeBirthdayMonthDay(monthDay).split('-'),now=new Date(),today=new Date(now.getFullYear(),now.getMonth(),now.getDate()),month=Number(part[0]),day=Number(part[1]);if(!month||!day)return null;let year=today.getFullYear(),target=new Date(year,month-1,day);while(target.getMonth()!==month-1||target.getDate()!==day){year++;target=new Date(year,month-1,day);}if(target<today){year++;target=new Date(year,month-1,day);while(target.getMonth()!==month-1||target.getDate()!==day){year++;target=new Date(year,month-1,day);}}return{date:target,days:Math.round((target-today)/86400000)};}
         function renderDashboardBirthdays(){
@@ -1949,9 +2006,23 @@
             const item=dashboardBirthdayItems.find(function(entry){return String(entry.studentCode)===String(studentCode);});if(!item)return;const occurrence=birthdayOccurrence(item.birthdayMonthDay),dateText=occurrence?occurrence.date.toLocaleDateString('th-TH',{day:'numeric',month:'long'}):'',initial=(item.nickname||item.fname||item.name||'?').slice(0,1),photo=item.profileUrl?'<img src="'+profileEsc(item.profileUrl)+'" class="birthday-greeting-photo" alt="รูป '+profileEsc(item.name||'นักเรียน')+'" referrerpolicy="no-referrer">':'<div class="birthday-greeting-photo birthday-greeting-fallback">'+profileEsc(initial)+'</div>',displayName=item.nickname?profileEsc(item.name||'นักเรียน')+' <small>('+profileEsc(item.nickname)+')</small>':profileEsc(item.name||'นักเรียน');
             Swal.fire({width:680,showCloseButton:true,showConfirmButton:true,confirmButtonText:'ปิดการ์ด',confirmButtonColor:'#a855f7',html:'<div class="birthday-greeting"><span class="birthday-greeting-spark s1">✦</span><span class="birthday-greeting-spark s2">●</span><span class="birthday-greeting-spark s3">★</span><p class="birthday-greeting-school">'+profileEsc(schoolSettings.schoolName||'โรงเรียน')+'</p>'+photo+'<p class="birthday-greeting-label">HAPPY BIRTHDAY</p><h2>สุขสันต์วันเกิด</h2><h3>'+displayName+'</h3><p class="birthday-greeting-class">เลขที่ '+profileEsc(item.no||'-')+' · '+profileEsc(classroomDisplay(item.room,item.level))+' · '+profileEsc(dateText)+'</p><div class="birthday-greeting-message">ขอให้มีความสุขมาก ๆ สุขภาพแข็งแรง<br>สมหวังในสิ่งที่ตั้งใจ และสนุกกับการเรียนรู้ในทุกวัน 🎂</div><p class="birthday-greeting-sign">ด้วยความปรารถนาดีจากคุณครูและเพื่อน ๆ</p></div>'});
         }
+        function maybeShowBirthdayAnnouncement(attempt){
+            clearTimeout(birthdayAnnouncementTimer);
+            const todayItems=dashboardBirthdayItems.filter(function(item){const occurrence=birthdayOccurrence(item.birthdayMonthDay);return occurrence&&occurrence.days===0;});
+            if(!todayItems.length||typeof Swal==='undefined')return;
+            const today=getLocalISODate(),signature=todayItems.map(function(item){return String(item.studentCode||item.name||'');}).sort().join('|'),seenKey='checkdee_birthday_announcement_'+today;
+            try{if(sessionStorage.getItem(seenKey)===signature)return;}catch(error){}
+            birthdayAnnouncementTimer=setTimeout(function(){
+                if(Swal.isVisible()&&Number(attempt||0)<4){maybeShowBirthdayAnnouncement(Number(attempt||0)+1);return;}
+                try{sessionStorage.setItem(seenKey,signature);}catch(error){}
+                if(todayItems.length===1){openBirthdayGreeting(todayItems[0].studentCode);return;}
+                const cards=todayItems.map(function(item){const initial=(item.nickname||item.fname||item.name||'?').slice(0,1),photo=item.profileUrl?'<img src="'+profileEsc(item.profileUrl)+'" class="w-16 h-16 rounded-2xl object-cover border-4 border-white shadow" alt="รูป '+profileEsc(item.name||'นักเรียน')+'" referrerpolicy="no-referrer">':'<span class="w-16 h-16 rounded-2xl bg-purple-100 text-purple-700 grid place-items-center text-2xl font-black">'+profileEsc(initial)+'</span>';return '<button type="button" data-open-birthday="'+profileEsc(item.studentCode||'')+'" class="w-full flex items-center gap-3 rounded-2xl border border-pink-100 bg-white p-3 text-left hover:border-purple-300 hover:shadow-md transition">'+photo+'<span class="min-w-0"><b class="block text-slate-800">'+profileEsc(item.name||'นักเรียน')+'</b><small class="text-slate-500">'+(item.nickname?'ชื่อเล่น '+profileEsc(item.nickname)+' · ':'')+profileEsc(classroomDisplay(item.room,item.level))+'</small><span class="block mt-1 text-xs font-bold text-purple-600"><i class="fas fa-envelope-open-text mr-1"></i>เปิดการ์ดอวยพร</span></span></button>';}).join('');
+                Swal.fire({width:700,showCloseButton:true,confirmButtonText:'ขอให้ทุกคนมีความสุข 🎉',confirmButtonColor:'#a855f7',title:'🎂 วันนี้มีเจ้าของวันเกิด '+todayItems.length+' คน',html:'<p class="text-sm text-slate-500 mb-4">'+profileEsc(schoolSettings.schoolName||'โรงเรียน')+' ขอร่วมส่งคำอวยพรให้กับนักเรียนของเรา</p><div class="grid sm:grid-cols-2 gap-3 max-h-[55vh] overflow-y-auto p-1">'+cards+'</div>',didOpen:function(){Swal.getPopup().querySelectorAll('[data-open-birthday]').forEach(function(button){button.addEventListener('click',function(){const code=button.dataset.openBirthday;Swal.close();setTimeout(function(){openBirthdayGreeting(code);},120);});});}});
+            },450);
+        }
         async function loadDashboardBirthdays(force){
-            if(dashboardBirthdayLoading)return;if(dashboardBirthdayLoaded&&!force){renderDashboardBirthdays();return;}const loading=document.getElementById('dashboardBirthdayLoading'),grid=document.getElementById('dashboardBirthdayGrid'),empty=document.getElementById('dashboardBirthdayEmpty');if(!grid)return;dashboardBirthdayLoading=true;if(loading)loading.classList.remove('hidden');grid.classList.add('hidden');if(empty)empty.classList.add('hidden');
-            try{if(typeof window.fetchStudentIntroductionsPublic!=='function')throw new Error('โมดูลข้อมูลแนะนำตัวยังโหลดไม่สมบูรณ์');const response=await window.fetchStudentIntroductionsPublic(),source=allStudents.length?allStudents:students;dashboardBirthdayItems=(response.introductions||[]).map(function(item){const st=source.find(function(student){return String(student.code)===String(item.studentCode);})||{},monthDay=normalizeBirthdayMonthDay(item.birthdayMonthDay||item.birthday);return Object.assign({},item,{birthdayMonthDay:monthDay,name:item.name||(((st.prefix||'')+(st.fname||'')+' '+(st.lname||'')).trim()),fname:item.fname||st.fname||'',no:item.no||studentNumber(st),room:item.room||st.room||'',level:shortLevelLabel(item.level||studentLevel(st)),profileUrl:item.profileUrl||st.profileUrl||st.photoUrl||''});}).filter(function(item){return item.birthdayMonthDay;});dashboardBirthdayLoaded=true;renderDashboardBirthdays();}
+            if(dashboardBirthdayLoading)return;if(dashboardBirthdayLoaded&&!force){renderDashboardBirthdays();maybeShowBirthdayAnnouncement();return;}const loading=document.getElementById('dashboardBirthdayLoading'),grid=document.getElementById('dashboardBirthdayGrid'),empty=document.getElementById('dashboardBirthdayEmpty');if(!grid)return;dashboardBirthdayLoading=true;if(loading)loading.classList.remove('hidden');grid.classList.add('hidden');if(empty)empty.classList.add('hidden');
+            try{if(typeof window.fetchStudentIntroductionsPublic!=='function')throw new Error('โมดูลข้อมูลแนะนำตัวยังโหลดไม่สมบูรณ์');const response=await window.fetchStudentIntroductionsPublic(),source=allStudents.length?allStudents:students;dashboardBirthdayItems=(response.introductions||[]).map(function(item){const st=source.find(function(student){return String(student.code)===String(item.studentCode);})||{},monthDay=normalizeBirthdayMonthDay(item.birthdayMonthDay||item.birthday);return Object.assign({},item,{birthdayMonthDay:monthDay,name:item.name||(((st.prefix||'')+(st.fname||'')+' '+(st.lname||'')).trim()),fname:item.fname||st.fname||'',no:item.no||studentNumber(st),room:item.room||st.room||'',level:shortLevelLabel(item.level||studentLevel(st)),profileUrl:item.profileUrl||st.profileUrl||st.photoUrl||''});}).filter(function(item){return item.birthdayMonthDay;});dashboardBirthdayLoaded=true;renderDashboardBirthdays();maybeShowBirthdayAnnouncement();}
             catch(error){if(loading)loading.classList.add('hidden');if(empty){empty.classList.remove('hidden');empty.innerHTML='<i class="fas fa-calendar-days text-3xl text-purple-300 mb-3 block"></i><b class="block text-slate-700">โหลดข้อมูลวันเกิดไม่สำเร็จ</b><span class="text-xs">'+profileEsc(error.message||String(error))+'</span>';}}
             finally{dashboardBirthdayLoading=false;}
         }
