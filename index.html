@@ -1089,7 +1089,7 @@
                     <div class="border-t border-gray-200 pt-7 pb-12">
                         <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-5">
                             <div><h3 class="text-xl font-bold text-gray-800"><i class="fas fa-user-shield text-rose-500 mr-2"></i>นักเรียนที่ควรติดตาม</h3><p class="text-sm text-gray-500 mt-1">คัดกรองจากการมาเรียน งานค้าง การมาสาย และคะแนนพฤติกรรมในข้อมูลปัจจุบัน</p></div>
-                            <div class="flex flex-wrap gap-2"><input id="riskSearch" oninput="renderStudentRiskAnalytics()" placeholder="ค้นหาชื่อหรือรหัส..." class="px-3 py-2 rounded-xl border bg-white text-sm"><select id="riskLevelFilter" onchange="renderStudentRiskAnalytics()" class="px-3 py-2 rounded-xl border bg-white text-sm"><option value="all">ทุกระดับความเสี่ยง</option><option value="high">เสี่ยงสูง</option><option value="medium">เสี่ยงปานกลาง</option><option value="watch">เฝ้าระวัง</option><option value="normal">ปกติ</option></select></div>
+                            <div class="flex flex-wrap gap-2"><input id="riskSearch" oninput="renderStudentRiskAnalytics()" placeholder="ค้นหาชื่อหรือรหัส..." class="px-3 py-2 rounded-xl border bg-white text-sm"><select id="riskGradeFilter" onchange="handleRiskGradeChange()" class="px-3 py-2 rounded-xl border bg-white text-sm"><option value="all">ทุกระดับชั้น</option></select><select id="riskRoomFilter" onchange="renderStudentRiskAnalytics()" class="px-3 py-2 rounded-xl border bg-white text-sm"><option value="all">ทุกห้องเรียน</option></select><select id="riskLevelFilter" onchange="renderStudentRiskAnalytics()" class="px-3 py-2 rounded-xl border bg-white text-sm"><option value="all">ทุกระดับความเสี่ยง</option><option value="high">เสี่ยงสูง</option><option value="medium">เสี่ยงปานกลาง</option><option value="watch">เฝ้าระวัง</option><option value="normal">ปกติ</option></select></div>
                         </div>
                         <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-5">
                             <div class="glass-card p-4 rounded-2xl border-l-4 border-red-500"><p class="text-xs text-gray-500">เสี่ยงสูง</p><p id="riskHighCount" class="text-2xl font-bold text-red-600">0</p></div>
@@ -1266,6 +1266,12 @@
                                         <button type="button" data-theme-color="#ea580c" class="w-8 h-8 rounded-full border-2 border-white shadow ring-1 ring-gray-200" style="background:#ea580c" title="ส้ม"></button>
                                         <input id="setThemeColor" type="color" value="#7c3aed" class="w-10 h-10 rounded-lg border bg-white p-1 cursor-pointer" title="กำหนดสีเอง">
                                     </div>
+                                </div>
+                            </div>
+                            <div class="border-t border-gray-100 pt-5 mb-6">
+                                <div class="rounded-2xl bg-slate-50 border border-slate-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div><h4 class="text-sm font-bold text-gray-800"><i class="fas fa-copy mr-2 text-purple-600"></i>การคัดลอกเนื้อหา</h4><p class="text-xs text-gray-500 mt-1">แอดมินกำหนดได้ว่าจะอนุญาตให้ผู้ใช้คัดลอกข้อความจากหน้าเว็บหรือไม่ (ช่องกรอกข้อมูลยังใช้งานได้ตามปกติ)</p></div>
+                                    <label class="inline-flex items-center gap-3 cursor-pointer select-none whitespace-nowrap"><input id="setAllowCopy" type="checkbox" class="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"><span class="text-sm font-bold text-gray-700">อนุญาตให้คัดลอก</span></label>
                                 </div>
                             </div>
                             <div class="border-t border-gray-100 pt-5 mb-6">
@@ -1465,6 +1471,7 @@
             year: '2569', 
             term: '1', 
             logoUrl: '',
+            allowCopy: true,
             subjects: [
                 {id:'sub_thai',code:'ท21101',name:'ภาษาไทย',group:'ภาษาไทย',color:'#7c3aed',levels:[],rooms:[],active:true}
             ],
@@ -1549,6 +1556,8 @@
             document.getElementById('setYear').value = schoolSettings.year; 
             document.getElementById('setTerm').value = schoolSettings.term;
             document.getElementById('setLogoUrl').value = schoolSettings.logoUrl;
+            var allowCopySetting = document.getElementById('setAllowCopy');
+            if(allowCopySetting) allowCopySetting.checked = schoolSettings.allowCopy !== false;
             
             if(document.getElementById('setTeacherUsername')) {
                 document.getElementById('setTeacherUsername').value = teacherAuth.username;
@@ -3816,6 +3825,7 @@
             schoolSettings.year = document.getElementById('setYear').value.trim();
             schoolSettings.term = document.getElementById('setTerm').value;
             schoolSettings.logoUrl = document.getElementById('setLogoUrl').value.trim();
+            schoolSettings.allowCopy = document.getElementById('setAllowCopy').checked;
             
             await syncDataToServer(); 
             document.getElementById('sidebarSchoolName').innerText = schoolSettings.schoolName; 
@@ -4174,6 +4184,18 @@
     function riskDateRange(){var start=document.getElementById('analyticsStartDate'),end=document.getElementById('analyticsEndDate');return {start:start&&start.value?start.value:'0000-01-01',end:end&&end.value?end.value:'9999-12-31',room:(document.getElementById('analyticsRoomFilter')||{}).value||'all'};}
     function riskLevel(score){return score>=70?'high':score>=50?'medium':score>=30?'watch':'normal';}
     function riskLevelMeta(level){return {high:{label:'เสี่ยงสูง',cls:'bg-red-50 text-red-600'},medium:{label:'เสี่ยงปานกลาง',cls:'bg-orange-50 text-orange-600'},watch:{label:'เฝ้าระวัง',cls:'bg-amber-50 text-amber-600'},normal:{label:'ปกติ',cls:'bg-emerald-50 text-emerald-600'}}[level];}
+    function riskStudentGrade(st){return typeof studentLevel==='function'?studentLevel(st):String((st&&st.class)||String((st&&st.room)||'').split('/')[0]||'').trim();}
+    function syncRiskFilterOptions(){
+        var gradeEl=document.getElementById('riskGradeFilter'),roomEl=document.getElementById('riskRoomFilter');if(!gradeEl||!roomEl)return;
+        var source=allStudents&&allStudents.length?allStudents:(students||[]),selectedGrade=gradeEl.value||'all',selectedRoom=roomEl.value||'all';
+        var grades=Array.from(new Set(source.map(riskStudentGrade).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'th',{numeric:true});});
+        gradeEl.innerHTML='<option value="all">ทุกระดับชั้น</option>'+grades.map(function(grade){return '<option value="'+riskEsc(grade)+'">'+riskEsc(typeof longLevelLabel==='function'?longLevelLabel(grade):grade)+'</option>';}).join('');
+        gradeEl.value=grades.indexOf(selectedGrade)>=0?selectedGrade:'all';selectedGrade=gradeEl.value;
+        var rooms=Array.from(new Set(source.filter(function(st){return selectedGrade==='all'||riskStudentGrade(st)===selectedGrade;}).map(function(st){return String(st.room||'').trim();}).filter(Boolean))).sort(function(a,b){return a.localeCompare(b,'th',{numeric:true});});
+        roomEl.innerHTML='<option value="all">ทุกห้องเรียน</option>'+rooms.map(function(room){return '<option value="'+riskEsc(room)+'">'+riskEsc(typeof classroomDisplay==='function'?classroomDisplay(room):room)+'</option>';}).join('');
+        roomEl.value=rooms.indexOf(selectedRoom)>=0?selectedRoom:'all';
+    }
+    window.handleRiskGradeChange=function(){var room=document.getElementById('riskRoomFilter');if(room)room.value='all';syncRiskFilterOptions();window.renderStudentRiskAnalytics();};
     function buildStudentAttendance(range){
         var rows={};
         function add(history,isHomeroom){Object.keys(history||{}).forEach(function(key){var p=key.split('_'),date=p[0],recordRoom=isHomeroom?p.slice(1).join('_'):p[p.length-1];if(date<range.start||date>range.end||(range.room!=='all'&&String(recordRoom)!==String(range.room)))return;Object.keys(history[key]||{}).forEach(function(id){var st=(students||[]).find(function(s){return String(s.id)===String(id);});if(!st||(range.room!=='all'&&String(st.room)!==String(range.room)))return;var item=history[key][id],status=item&&item.status?item.status:item,rowKey=date+'|'+id;if(isHomeroom||!rows[rowKey])rows[rowKey]={id:String(id),date:date,status:status};});});}
@@ -4194,7 +4216,9 @@
         }).sort(function(a,b){return b.score-a.score||b.missing.length-a.missing.length||b.counts.khad-a.counts.khad;});
     }
     window.renderStudentRiskAnalytics=function(){
-        var body=document.getElementById('riskStudentTableBody');if(!body)return;riskAnalyticsCache=calculateStudentRisks();
+        var body=document.getElementById('riskStudentTableBody');if(!body)return;syncRiskFilterOptions();riskAnalyticsCache=calculateStudentRisks();
+        var gradeFilter=(document.getElementById('riskGradeFilter')||{}).value||'all',roomFilter=(document.getElementById('riskRoomFilter')||{}).value||'all';
+        riskAnalyticsCache=riskAnalyticsCache.filter(function(x){return (gradeFilter==='all'||riskStudentGrade(x.student)===gradeFilter)&&(roomFilter==='all'||String(x.student.room||'')===String(roomFilter));});
         document.getElementById('riskHighCount').innerText=riskAnalyticsCache.filter(function(x){return x.level==='high';}).length;document.getElementById('riskMediumCount').innerText=riskAnalyticsCache.filter(function(x){return x.level==='medium';}).length;document.getElementById('riskWatchCount').innerText=riskAnalyticsCache.filter(function(x){return x.level==='watch';}).length;document.getElementById('riskCombinedCount').innerText=riskAnalyticsCache.filter(function(x){return x.combined;}).length;document.getElementById('riskMissingWorkCount').innerText=riskAnalyticsCache.reduce(function(n,x){return n+x.missing.length;},0);
         var q=((document.getElementById('riskSearch')||{}).value||'').trim().toLowerCase(),filter=(document.getElementById('riskLevelFilter')||{}).value||'all',list=riskAnalyticsCache.filter(function(x){var st=x.student,name=((st.prefix||'')+(st.fname||'')+' '+(st.lname||'')).toLowerCase();return (!q||(String(st.code||'')+' '+name).toLowerCase().indexOf(q)>=0)&&(filter==='all'||x.level===filter);});
         body.innerHTML=list.length?list.map(function(x){var st=x.student,m=riskLevelMeta(x.level),name=riskEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||''));return '<tr class="hover:bg-purple-50/40"><td class="p-3"><p class="font-bold text-gray-800">'+name+'</p><p class="text-xs text-gray-400">'+riskEsc(st.code||'-')+' · '+riskEsc(x.reasons.slice(0,2).join(' · '))+'</p></td><td class="p-3 text-center">'+riskEsc(st.room||'-')+'</td><td class="p-3 text-center font-bold '+(x.rate!=null&&x.rate<80?'text-red-600':'text-emerald-600')+'">'+(x.rate==null?'—':x.rate+'%')+'</td><td class="p-3 text-center text-red-600 font-bold">'+x.counts.khad+'</td><td class="p-3 text-center text-amber-600">'+x.counts.sai+'</td><td class="p-3 text-center text-purple-600 font-bold">'+x.missing.length+'</td><td class="p-3 text-center">'+x.behavior+'</td><td class="p-3 text-center"><span class="px-2.5 py-1 rounded-lg text-xs font-bold '+m.cls+'">'+x.score+' · '+m.label+'</span></td><td class="p-3 text-center"><button data-code="'+riskEsc(st.code||'')+'" onclick="openRiskStudentDetail(this.dataset.code)" class="px-3 py-1.5 bg-gray-900 text-white rounded-lg text-xs font-bold"><i class="fas fa-search mr-1"></i>รายละเอียด</button></td></tr>';}).join(''):'<tr><td colspan="9" class="text-center py-10 text-gray-400">ไม่พบนักเรียนตามเงื่อนไข</td></tr>';
@@ -4566,7 +4590,8 @@ window.saveSchoolSettings = async function() {
         schoolName:document.getElementById('setSchoolName').value.trim(),
         year:document.getElementById('setYear').value.trim(),
         term:document.getElementById('setTerm').value,
-        logoUrl:document.getElementById('setLogoUrl').value.trim()
+        logoUrl:document.getElementById('setLogoUrl').value.trim(),
+        allowCopy:document.getElementById('setAllowCopy').checked
     });
     var periodChanged = String(nextSettings.year) !== String(schoolSettings.year) || String(nextSettings.term) !== String(schoolSettings.term);
     if (!periodChanged) return coreSaveSchoolSettingsForTerm();
@@ -5100,6 +5125,16 @@ function renderOnlineExamHub(){
     document.addEventListener('contextmenu',function(event){
         event.preventDefault();
         showProtectedNotice();
+    },true);
+    document.addEventListener('copy',function(event){
+        if(typeof schoolSettings==='undefined'||schoolSettings.allowCopy!==false)return;
+        var target=event.target;
+        if(target&&target.closest&&target.closest('input, textarea, [contenteditable="true"]'))return;
+        event.preventDefault();
+        var now=Date.now();
+        if(now-lastNoticeAt<1200)return;
+        lastNoticeAt=now;
+        if(typeof Swal!=='undefined')Swal.fire({toast:true,position:'top-end',icon:'info',title:'ผู้ดูแลระบบปิดการคัดลอกเนื้อหา',showConfirmButton:false,timer:1800,timerProgressBar:true});
     },true);
     document.addEventListener('keydown',function(event){
         var key=String(event.key||'').toLowerCase();
