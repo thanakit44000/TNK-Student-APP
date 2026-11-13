@@ -2804,7 +2804,7 @@
             visibleCategories.forEach(cat => { 
                 const editAttrs = isAuth ? `class="p-3 text-center w-32 min-w-[120px] cursor-pointer hover:bg-gray-200 transition" onclick="ahOpenEditCategoryModal('${cat.id}')" title="คลิกเพื่อแก้ไข"` : `class="p-3 text-center w-32 min-w-[120px]" title="ดูข้อมูลภาระงาน"`;
                 const labelClass = isAuth ? 'truncate block text-xs w-full text-purple-700 underline' : 'truncate block text-xs w-full text-gray-700';
-                headHTML += `<th ${editAttrs}><i class="${cat.icon} text-purple-400 block mb-1 text-lg"></i><span class="${labelClass}">${cat.label}</span></th>`; 
+                headHTML += `<th ${editAttrs}><i class="${cat.icon} text-purple-400 block mb-1 text-lg"></i><span class="${labelClass}">${cat.label}</span>${isAuth?`<button type="button" onclick="event.stopPropagation();ahOpenBulkGradeModal('${cat.id}')" class="mt-2 px-2 py-1 rounded-lg bg-purple-600 text-white text-[9px] font-bold hover:bg-purple-700 whitespace-nowrap"><i class="fas fa-list-check mr-1"></i>ตรวจหลายคน</button>`:''}</th>`; 
             }); 
             headHTML += `</tr>`; 
             thead.innerHTML = headHTML;
@@ -2859,6 +2859,58 @@
                 if (rowHasTargetStatus) bodyHTML += rowHTML;
             });
             tbody.innerHTML = bodyHTML || `<tr><td colspan="${4+visibleCategories.length}" class="text-center py-10 text-gray-500">ไม่มีผลงานที่ตรงกับสถานะตัวกรอง</td></tr>`;
+        }
+
+        function ahBulkApplyGrade(){
+            const status=document.getElementById('bulkGradeAllStatus').value;
+            const score=document.getElementById('bulkGradeAllScore').value;
+            const maxScore=document.getElementById('bulkGradeAllMax').value;
+            document.querySelectorAll('#bulkGradeRows [data-bulk-grade-row]').forEach(function(row){
+                if(!row.querySelector('.bulk-grade-check').checked)return;
+                if(status)row.querySelector('.bulk-grade-status').value=status;
+                if(score!=='')row.querySelector('.bulk-grade-score').value=score;
+                if(maxScore!=='')row.querySelector('.bulk-grade-max').value=maxScore;
+            });
+        }
+
+        function ahOpenBulkGradeModal(catId){
+            if(!isAuth)return Swal.fire('จำกัดสิทธิ์','กรุณาเข้าสู่ระบบครู','warning');
+            const category=ahCategories.find(function(cat){return String(cat.id)===String(catId);});
+            const roomF=(document.getElementById('summaryRoomFilter')||{}).value||'all';
+            const levelF=(document.getElementById('summaryLevelFilter')||{}).value||'all';
+            const source=allStudents.length?allStudents:students;
+            const rows=ahSubmissions.filter(function(sub){
+                if(String(sub.catId)!==String(catId))return false;
+                const st=source.find(function(student){return String(student.code)===String(sub.studentCode);});
+                return st&&(roomF==='all'||String(st.room)===String(roomF))&&(levelF==='all'||studentLevel(st)===levelF);
+            }).map(function(sub){return {sub:sub,st:source.find(function(student){return String(student.code)===String(sub.studentCode);})};}).sort(function(a,b){return String(a.st.room||'').localeCompare(String(b.st.room||''),'th',{numeric:true})||studentRosterSort(a.st,b.st);});
+            if(!rows.length)return Swal.fire('ยังไม่มีงานส่ง','ไม่พบงานที่นักเรียนส่งในตัวกรองปัจจุบัน','info');
+            const rowHtml=rows.map(function(item){
+                const sub=item.sub,st=item.st,status=sub.status||'pending';
+                return `<tr data-bulk-grade-row data-submission-id="${profileEsc(sub.id)}" class="border-b last:border-0">
+                    <td class="p-2 text-center"><input type="checkbox" class="bulk-grade-check w-4 h-4" checked></td>
+                    <td class="p-2 text-left"><b class="block text-xs text-slate-800">${profileEsc((st.prefix||'')+(st.fname||'')+' '+(st.lname||''))}</b><small class="text-[10px] text-slate-400">เลขที่ ${profileEsc(studentNumber(st))} · ${profileEsc(classroomDisplay(st.room,studentLevel(st)))}</small></td>
+                    <td class="p-2"><select class="bulk-grade-status w-full min-w-24 p-2 border rounded-lg text-xs font-bold"><option value="pending" ${status==='pending'?'selected':''}>รอตรวจ</option><option value="pass" ${status==='pass'?'selected':''}>ผ่าน</option><option value="revise" ${status==='revise'?'selected':''}>แก้ไข</option></select></td>
+                    <td class="p-2"><input type="number" min="0" class="bulk-grade-score w-20 p-2 border rounded-lg text-center text-xs" value="${sub.score==null?'':profileEsc(sub.score)}" placeholder="คะแนน"></td>
+                    <td class="p-2"><input type="number" min="1" class="bulk-grade-max w-20 p-2 border rounded-lg text-center text-xs" value="${profileEsc(sub.maxScore||100)}"></td>
+                </tr>`;
+            }).join('');
+            Swal.fire({
+                title:'ตรวจหลายคน · '+(category?category.label:'งาน'),width:900,
+                html:`<div class="text-left"><div class="grid grid-cols-2 sm:grid-cols-4 gap-2 rounded-xl bg-purple-50 border border-purple-100 p-3 mb-3"><select id="bulkGradeAllStatus" class="p-2 border rounded-lg text-xs"><option value="">สถานะเดิม</option><option value="pass">ผ่านทั้งหมด</option><option value="revise">แก้ไขทั้งหมด</option><option value="pending">รอตรวจทั้งหมด</option></select><input id="bulkGradeAllScore" type="number" min="0" class="p-2 border rounded-lg text-xs" placeholder="คะแนนเดียวกัน"><input id="bulkGradeAllMax" type="number" min="1" class="p-2 border rounded-lg text-xs" value="100" placeholder="คะแนนเต็ม"><button type="button" onclick="ahBulkApplyGrade()" class="p-2 rounded-lg bg-purple-600 text-white text-xs font-bold">ใช้กับรายการที่เลือก</button></div><div class="max-h-[52vh] overflow-auto border rounded-xl"><table class="w-full text-xs"><thead class="sticky top-0 bg-slate-100 z-10"><tr><th class="p-2">เลือก</th><th class="p-2 text-left">นักเรียน</th><th class="p-2">สถานะ</th><th class="p-2">คะแนน</th><th class="p-2">เต็ม</th></tr></thead><tbody id="bulkGradeRows">${rowHtml}</tbody></table></div><p class="text-[11px] text-gray-400 mt-2">แสดงเฉพาะนักเรียนที่ส่งงานแล้วตามห้องและระดับชั้นที่เลือก</p></div>`,
+                showCancelButton:true,confirmButtonText:'บันทึกผลทั้งหมด',cancelButtonText:'ยกเลิก',confirmButtonColor:'#7c3aed',
+                preConfirm:function(){
+                    const selected=Array.from(document.querySelectorAll('#bulkGradeRows [data-bulk-grade-row]')).filter(function(row){return row.querySelector('.bulk-grade-check').checked;});
+                    if(!selected.length)return Swal.showValidationMessage('กรุณาเลือกอย่างน้อย 1 คน');
+                    const values=[];
+                    for(const row of selected){const score=Number(row.querySelector('.bulk-grade-score').value),maxScore=Number(row.querySelector('.bulk-grade-max').value);if(!Number.isFinite(score)||!Number.isFinite(maxScore)||score<0||maxScore<1||score>maxScore)return Swal.showValidationMessage('ตรวจสอบคะแนนและคะแนนเต็มของทุกรายการ');values.push({id:row.dataset.submissionId,status:row.querySelector('.bulk-grade-status').value,score:score,maxScore:maxScore});}
+                    return values;
+                }
+            }).then(async function(result){
+                if(!result.isConfirmed)return;
+                result.value.forEach(function(value){const sub=ahSubmissions.find(function(item){return String(item.id)===String(value.id);});if(sub){sub.status=value.status;sub.score=value.score;sub.maxScore=value.maxScore;sub.reviewedAt=new Date().toISOString();}});
+                try{await syncDataToServer();renderSummaryTable();Swal.fire({toast:true,position:'top-end',icon:'success',title:'บันทึกผลตรวจ '+result.value.length+' คนแล้ว',showConfirmButton:false,timer:1800});}catch(error){Swal.fire('บันทึกไม่สำเร็จ',error.message||String(error),'error');}
+            });
         }
 
         function ahGradeWork(id) {
