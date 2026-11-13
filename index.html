@@ -1305,9 +1305,10 @@
                             
                             <!-- จัดการรายชื่อส่วนกลาง -->
                             <div>
-                                <div class="flex justify-between items-center mb-3">
-                                    <h4 class="font-bold text-gray-800">จัดการรายชื่อนักเรียนในระบบ</h4>
-                                    <div class="flex gap-2">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-3">
+                                    <div><h4 class="font-bold text-gray-800">จัดการรายชื่อนักเรียนในระบบ</h4><p id="settingsStudentResultCount" class="text-[11px] text-gray-400 mt-1"></p></div>
+                                    <div class="flex flex-col sm:flex-row gap-2">
+                                        <div class="relative"><i class="fas fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i><input id="settingsStudentSearch" type="search" oninput="renderSettingsStudentList()" class="w-full sm:w-64 text-xs border rounded-lg pl-8 pr-3 py-2 outline-none focus:border-purple-500" placeholder="ค้นหาชื่อ รหัส เลขที่ หรือห้อง..."></div>
                                         <select id="settingsRoomFilter" onchange="renderSettingsStudentList()" class="text-xs border rounded-lg px-2 py-1"><option value="all">ทุกห้อง</option></select>
                                     </div>
                                 </div>
@@ -4135,10 +4136,19 @@
 
         function renderSettingsStudentList() {
             const roomF = document.getElementById('settingsRoomFilter').value;
+            const q=String((document.getElementById('settingsStudentSearch')||{}).value||'').trim().toLowerCase();
+            const compactQ=q.replace(/\s+/g,'');
             let list = students;
             if(roomF !== 'all') list = list.filter(s => s.room === roomF);
+            if(q) list=list.filter(function(st){
+                const nickname=studentNicknameMap[String(st.code)]||st.nickname||'';
+                const text=[st.prefix,st.fname,st.lname,nickname,st.code,studentNumber(st),st.room,studentLevel(st)].join(' ').toLowerCase();
+                return text.includes(q)||text.replace(/\s+/g,'').includes(compactQ);
+            });
             list = list.slice().sort(function(a,b){return String(a.room||'').localeCompare(String(b.room||''),'th',{numeric:true})||studentRosterSort(a,b);});
             const tbody = document.getElementById('settingsStudentTableBody');
+            const resultCount=document.getElementById('settingsStudentResultCount');
+            if(resultCount)resultCount.textContent=(q||roomF!=='all'?'พบ '+list.length+' คน จากทั้งหมด '+students.length+' คน':'ทั้งหมด '+students.length+' คน');
             
             if(list.length === 0) { 
                 tbody.innerHTML = '<tr><td colspan="5" class="text-center py-6 text-gray-400">ไม่พบรายชื่อนักเรียน</td></tr>'; 
