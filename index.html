@@ -1374,7 +1374,7 @@
     <div id="roomManagerModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95 transition-transform" id="roomManagerBox">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-3xl"><h3 class="text-xl font-bold text-gray-800 flex items-center"><i class="fas fa-users text-purple-600 mr-2"></i> จัดการนักเรียนห้อง <span id="manageRoomTitle" class="text-purple-600 ml-1"></span></h3><button onclick="closeRoomManager()" class="text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-xl"></i></button></div>
-            <div class="p-4 flex flex-wrap gap-2 justify-between items-center border-b border-gray-100"><div><span class="text-sm font-bold text-gray-600">จำนวน: <span id="manageRoomCount" class="text-purple-600">0</span> คน</span><p class="text-[11px] text-gray-400 mt-1">แก้เลขที่ในช่องตาราง แล้วกดบันทึกครั้งเดียว</p></div><div class="flex flex-wrap gap-2"><button onclick="saveStudentNumbersCurrentRoom()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-sm"><i class="fas fa-floppy-disk mr-1"></i> บันทึกเลขที่</button><button onclick="assignStudentNumbersCurrentRoom()" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold"><i class="fas fa-arrow-down-1-9 mr-1"></i> จัดเลขที่อัตโนมัติ</button><button onclick="addStudentToCurrentRoom()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm transition-colors"><i class="fas fa-plus mr-1"></i> เพิ่มนักเรียน</button></div></div>
+            <div class="p-4 flex flex-wrap gap-2 justify-between items-center border-b border-gray-100"><div><span class="text-sm font-bold text-gray-600">จำนวน: <span id="manageRoomCount" class="text-purple-600">0</span> คน</span><p class="text-[11px] text-gray-400 mt-1">แก้เลขที่ในช่องตาราง แล้วกดบันทึกครั้งเดียว</p></div><div class="flex flex-wrap gap-2"><button onclick="moveStudentsToAnotherRoom()" class="px-4 py-2 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-xl text-xs font-bold"><i class="fas fa-people-arrows mr-1"></i> ย้ายทั้งห้อง</button><button onclick="saveStudentNumbersCurrentRoom()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-sm"><i class="fas fa-floppy-disk mr-1"></i> บันทึกเลขที่</button><button onclick="assignStudentNumbersCurrentRoom()" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold"><i class="fas fa-arrow-down-1-9 mr-1"></i> จัดเลขที่อัตโนมัติ</button><button onclick="addStudentToCurrentRoom()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm transition-colors"><i class="fas fa-plus mr-1"></i> เพิ่มนักเรียน</button></div></div>
             <div class="flex-1 overflow-y-auto p-4 bg-gray-50/50"><table class="w-full text-left text-sm whitespace-nowrap bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"><thead class="bg-gray-100 text-gray-600 font-bold uppercase text-xs"><tr><th class="p-3 w-14 text-center border-b">เลขที่</th><th class="p-3 w-24 text-center border-b">เลขประจำตัว</th><th class="p-3 border-b">ชื่อ - นามสกุล</th><th class="p-3 text-center w-24 border-b">จัดการ</th></tr></thead><tbody id="manageRoomTableBody" class="divide-y divide-gray-100"></tbody></table></div>
         </div>
     </div>
@@ -3943,6 +3943,50 @@
             await syncDataToServer();
             renderRoomStudents();renderSettingsStudentList();
             Swal.fire({toast:true,position:'top-end',icon:'success',title:'บันทึกเลขที่ทั้งห้องแล้ว',showConfirmButton:false,timer:1600});
+        }
+
+        async function moveStudentsToAnotherRoom(){
+            const source=allStudents.length?allStudents:students;
+            const moving=source.filter(function(st){return String(st.room||'')===String(currentManagingRoom||'');}).sort(studentRosterSort);
+            if(!moving.length)return Swal.fire('ยังไม่มีนักเรียนในห้องนี้','','info');
+            const otherRooms=classrooms.filter(function(room){return String(room)!==String(currentManagingRoom);});
+            const result=await Swal.fire({
+                icon:'question',title:'ย้ายนักเรียนทั้งห้อง',width:600,
+                html:`<div class="text-left space-y-4">
+                    <div class="rounded-xl bg-sky-50 border border-sky-100 p-3 text-sm text-sky-800">ย้าย <b>${moving.length} คน</b> จาก <b>${profileEsc(classroomDisplay(currentManagingRoom,roomLevelHint(currentManagingRoom)))}</b><br><small>รหัสนักเรียนและประวัติเดิมจะยังอยู่ครบ</small></div>
+                    <div><label class="block text-xs font-bold text-gray-500 mb-1">เลือกห้องที่มีอยู่</label><select id="swMoveExistingRoom" class="w-full px-3 py-2.5 border rounded-lg bg-white"><option value="">-- ไม่เลือก --</option>${otherRooms.map(function(room){return `<option value="${profileEsc(room)}">${profileEsc(classroomDisplay(room,roomLevelHint(room)))}</option>`;}).join('')}</select></div>
+                    <div class="text-center text-xs font-bold text-gray-400">หรือ</div>
+                    <div><label class="block text-xs font-bold text-gray-500 mb-1">สร้างห้องใหม่</label><input id="swMoveNewRoom" class="w-full px-3 py-2.5 border rounded-lg" placeholder="เช่น ม.2/2"></div>
+                    <label class="flex items-start gap-2 rounded-xl border bg-amber-50 p-3 text-sm text-amber-800"><input id="swMoveRenumber" type="checkbox" checked class="mt-1"><span><b>จัดเลขที่ใหม่ในห้องปลายทาง</b><br><small>ถ้าห้องปลายทางมีนักเรียนอยู่แล้ว จะเริ่มต่อจากเลขที่ล่าสุด</small></span></label>
+                </div>`,
+                showCancelButton:true,confirmButtonText:'ยืนยันการย้าย',cancelButtonText:'ยกเลิก',confirmButtonColor:'#0284c7',
+                preConfirm:function(){
+                    const existing=document.getElementById('swMoveExistingRoom').value;
+                    const created=document.getElementById('swMoveNewRoom').value.trim();
+                    if(existing&&created)return Swal.showValidationMessage('เลือกห้องเดิมหรือสร้างห้องใหม่อย่างใดอย่างหนึ่ง');
+                    const target=created||existing;
+                    if(!target)return Swal.showValidationMessage('กรุณาเลือกหรือระบุห้องปลายทาง');
+                    if(String(target)===String(currentManagingRoom))return Swal.showValidationMessage('ห้องปลายทางต้องไม่ใช่ห้องเดิม');
+                    return {target:target,renumber:document.getElementById('swMoveRenumber').checked};
+                }
+            });
+            if(!result.isConfirmed)return;
+            const target=result.value.target,renumber=result.value.renumber;
+            const occupied=source.filter(function(st){return String(st.room||'')===String(target)&&!moving.includes(st);});
+            if(!renumber){
+                const used=new Set(occupied.map(function(st){return String(studentNumber(st));}));
+                const collision=moving.find(function(st){return used.has(String(studentNumber(st)));});
+                if(collision)return Swal.fire('ย้ายไม่ได้','เลขที่ '+studentNumber(collision)+' ซ้ำกับนักเรียนในห้องปลายทาง กรุณาเลือกจัดเลขที่ใหม่','warning');
+            }
+            if(!classrooms.includes(target))classrooms.push(target);
+            let nextNo=occupied.reduce(function(max,st){const no=Number(studentNumber(st));return Number.isFinite(no)?Math.max(max,no):max;},0)+1;
+            const targetLevel=String(target).split('/')[0].trim();
+            moving.forEach(function(st){st.room=target;if(targetLevel)st.class=targetLevel;if(renumber)st.no=nextNo++;});
+            await syncDataToServer();
+            const oldRoom=currentManagingRoom;currentManagingRoom=target;
+            document.getElementById('manageRoomTitle').innerText=target;
+            renderRoomStudents();renderClassroomsSet();populateGlobalOptions();renderSettingsStudentList();
+            Swal.fire({icon:'success',title:'ย้ายนักเรียนเรียบร้อย',text:'ย้าย '+moving.length+' คน จาก '+classroomDisplay(oldRoom)+' ไป '+classroomDisplay(target),confirmButtonColor:'#7c3aed'});
         }
 
         async function assignStudentNumbersCurrentRoom(){
