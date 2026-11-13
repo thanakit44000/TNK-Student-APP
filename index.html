@@ -2908,8 +2908,20 @@
                 }
             }).then(async function(result){
                 if(!result.isConfirmed)return;
-                result.value.forEach(function(value){const sub=ahSubmissions.find(function(item){return String(item.id)===String(value.id);});if(sub){sub.status=value.status;sub.score=value.score;sub.maxScore=value.maxScore;sub.reviewedAt=new Date().toISOString();}});
-                try{await syncDataToServer();renderSummaryTable();Swal.fire({toast:true,position:'top-end',icon:'success',title:'บันทึกผลตรวจ '+result.value.length+' คนแล้ว',showConfirmButton:false,timer:1800});}catch(error){Swal.fire('บันทึกไม่สำเร็จ',error.message||String(error),'error');}
+                try{
+                    Swal.fire({title:'กำลังบันทึกผลตรวจ '+result.value.length+' คน...',allowOutsideClick:false,didOpen:function(){Swal.showLoading();}});
+                    if(IS_GAS_ENV){
+                        const raw=await new Promise(function(resolve,reject){google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).reviewSubmissionsBatch(result.value,teacherAuth.username,teacherAuth.password);});
+                        const parsed=typeof raw==='string'?JSON.parse(raw):raw;
+                        if(!parsed||parsed._sys_error)throw new Error((parsed&&parsed._sys_error)||'Server ไม่ยืนยันการบันทึก');
+                        (parsed.submissions||[]).forEach(function(updated){const local=ahSubmissions.find(function(item){return String(item.id)===String(updated.id);});if(local)Object.assign(local,updated);});
+                    }else{
+                        result.value.forEach(function(value){const sub=ahSubmissions.find(function(item){return String(item.id)===String(value.id);});if(sub){sub.status=value.status;sub.score=value.score;sub.maxScore=value.maxScore;sub.gradedAt=new Date().toISOString();}});
+                        await syncDataToServer();
+                    }
+                    renderSummaryTable();
+                    Swal.fire({toast:true,position:'top-end',icon:'success',title:'บันทึกผลตรวจ '+result.value.length+' คนแล้ว',showConfirmButton:false,timer:1800});
+                }catch(error){Swal.fire('บันทึกไม่สำเร็จ',error.message||String(error),'error');}
             });
         }
 
