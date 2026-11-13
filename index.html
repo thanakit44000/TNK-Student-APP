@@ -1374,7 +1374,7 @@
     <div id="roomManagerModal" class="fixed inset-0 z-[100] hidden bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 transition-opacity">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col transform scale-95 transition-transform" id="roomManagerBox">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-3xl"><h3 class="text-xl font-bold text-gray-800 flex items-center"><i class="fas fa-users text-purple-600 mr-2"></i> จัดการนักเรียนห้อง <span id="manageRoomTitle" class="text-purple-600 ml-1"></span></h3><button onclick="closeRoomManager()" class="text-gray-400 hover:text-red-500 transition-colors"><i class="fas fa-times text-xl"></i></button></div>
-            <div class="p-4 flex flex-wrap gap-2 justify-between items-center border-b border-gray-100"><span class="text-sm font-bold text-gray-600">จำนวน: <span id="manageRoomCount" class="text-purple-600">0</span> คน</span><div class="flex flex-wrap gap-2"><button onclick="assignStudentNumbersCurrentRoom()" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold"><i class="fas fa-arrow-down-1-9 mr-1"></i> จัดเลขที่อัตโนมัติ</button><button onclick="addStudentToCurrentRoom()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm transition-colors"><i class="fas fa-plus mr-1"></i> เพิ่มนักเรียน</button></div></div>
+            <div class="p-4 flex flex-wrap gap-2 justify-between items-center border-b border-gray-100"><div><span class="text-sm font-bold text-gray-600">จำนวน: <span id="manageRoomCount" class="text-purple-600">0</span> คน</span><p class="text-[11px] text-gray-400 mt-1">แก้เลขที่ในช่องตาราง แล้วกดบันทึกครั้งเดียว</p></div><div class="flex flex-wrap gap-2"><button onclick="saveStudentNumbersCurrentRoom()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-sm"><i class="fas fa-floppy-disk mr-1"></i> บันทึกเลขที่</button><button onclick="assignStudentNumbersCurrentRoom()" class="px-4 py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 rounded-xl text-xs font-bold"><i class="fas fa-arrow-down-1-9 mr-1"></i> จัดเลขที่อัตโนมัติ</button><button onclick="addStudentToCurrentRoom()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl text-xs font-bold shadow-sm transition-colors"><i class="fas fa-plus mr-1"></i> เพิ่มนักเรียน</button></div></div>
             <div class="flex-1 overflow-y-auto p-4 bg-gray-50/50"><table class="w-full text-left text-sm whitespace-nowrap bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm"><thead class="bg-gray-100 text-gray-600 font-bold uppercase text-xs"><tr><th class="p-3 w-14 text-center border-b">เลขที่</th><th class="p-3 w-24 text-center border-b">เลขประจำตัว</th><th class="p-3 border-b">ชื่อ - นามสกุล</th><th class="p-3 text-center w-24 border-b">จัดการ</th></tr></thead><tbody id="manageRoomTableBody" class="divide-y divide-gray-100"></tbody></table></div>
         </div>
     </div>
@@ -2790,9 +2790,17 @@
             if (levelF !== 'all') list = list.filter(s => studentLevel(s) === levelF);
             if (roomF !== 'all') list = list.filter(s => s.room === roomF);
             list.sort(function(a,b){return String(a.room||'').localeCompare(String(b.room||''),'th',{numeric:true})||studentRosterSort(a,b);});
+            // เมื่อเลือกห้อง ให้แสดงเฉพาะงานที่มอบหมายแก่ห้องนั้นจริง ๆ
+            // ส่วนมุมมอง "ทุกห้อง" ยังคงแสดงงานทั้งหมดเพื่อใช้เป็นภาพรวม
+            const visibleCategories = ahCategories.filter(function(cat){
+                if(cat.archived) return false;
+                if(roomF === 'all') return true;
+                const allowed = Array.isArray(cat.allowedRooms) ? cat.allowedRooms.map(String) : ['all'];
+                return allowed.includes('all') || allowed.includes(String(roomF));
+            });
             
             let headHTML = `<tr><th class="p-3 text-center w-16">เลขที่</th><th class="p-3 text-left min-w-[300px] sticky left-0 z-20">ชื่อ - นามสกุล</th><th class="p-3 text-left min-w-[110px]">ชื่อเล่น</th><th class="p-3 text-center w-24">ห้อง</th>`;
-            ahCategories.filter(cat => !cat.archived).forEach(cat => { 
+            visibleCategories.forEach(cat => { 
                 const editAttrs = isAuth ? `class="p-3 text-center w-32 min-w-[120px] cursor-pointer hover:bg-gray-200 transition" onclick="ahOpenEditCategoryModal('${cat.id}')" title="คลิกเพื่อแก้ไข"` : `class="p-3 text-center w-32 min-w-[120px]" title="ดูข้อมูลภาระงาน"`;
                 const labelClass = isAuth ? 'truncate block text-xs w-full text-purple-700 underline' : 'truncate block text-xs w-full text-gray-700';
                 headHTML += `<th ${editAttrs}><i class="${cat.icon} text-purple-400 block mb-1 text-lg"></i><span class="${labelClass}">${cat.label}</span></th>`; 
@@ -2801,7 +2809,7 @@
             thead.innerHTML = headHTML;
             
             if (list.length === 0) { 
-                tbody.innerHTML = `<tr><td colspan="${4+ahCategories.length}" class="text-center py-10 text-gray-500">ไม่พบนักเรียนในห้องที่เลือก</td></tr>`; 
+                tbody.innerHTML = `<tr><td colspan="${4+visibleCategories.length}" class="text-center py-10 text-gray-500">ไม่พบนักเรียนในห้องที่เลือก</td></tr>`; 
                 return; 
             }
 
@@ -2816,7 +2824,7 @@
                     <td class="p-3 text-left text-gray-700">${studentNicknameMap[String(st.code)]||st.nickname||'-'}</td>
                     <td class="p-3 text-center text-gray-600 text-xs font-medium">${classroomDisplay(st.room,studentLevel(st))}</td>`;
                 
-            ahCategories.filter(cat => !cat.archived).forEach(cat => {
+                visibleCategories.forEach(cat => {
                     const sub = ahSubmissions.find(s => s.catId === cat.id && s.studentCode === st.code); 
                     const isAllowed = cat.allowedRooms.includes('all') || cat.allowedRooms.includes(st.room);
                     let badge = ''; 
@@ -2849,7 +2857,7 @@
                 
                 if (rowHasTargetStatus) bodyHTML += rowHTML;
             });
-            tbody.innerHTML = bodyHTML || `<tr><td colspan="${3+ahCategories.length}" class="text-center py-10 text-gray-500">ไม่มีผลงานที่ตรงกับสถานะตัวกรอง</td></tr>`;
+            tbody.innerHTML = bodyHTML || `<tr><td colspan="${4+visibleCategories.length}" class="text-center py-10 text-gray-500">ไม่มีผลงานที่ตรงกับสถานะตัวกรอง</td></tr>`;
         }
 
         function ahGradeWork(id) {
@@ -3912,7 +3920,7 @@
             } 
             tbody.innerHTML = list.map((st, idx) => `
                 <tr class="hover:bg-purple-50 transition-colors">
-                    <td class="p-3 text-center text-purple-700 font-bold">${profileEsc(studentNumber(st))}</td>
+                    <td class="p-2 text-center"><input type="number" min="1" step="1" value="${studentNumber(st)==='-'?'':profileEsc(studentNumber(st))}" data-student-number-id="${profileEsc(st.id)}" class="w-16 px-2 py-1.5 text-center font-bold text-purple-700 border border-purple-200 rounded-lg bg-purple-50 focus:bg-white focus:border-purple-500 outline-none" aria-label="เลขที่ของ ${profileEsc((st.fname||'')+' '+(st.lname||''))}"></td>
                     <td class="p-3 text-center text-gray-500 font-medium">${profileEsc(st.code)}</td>
                     <td class="p-3 font-bold text-gray-800">${st.prefix}${st.fname} ${st.lname}</td>
                     <td class="p-3 text-center space-x-1">
@@ -3920,6 +3928,21 @@
                         <button onclick="deleteStudentFromRoom(${st.id})" class="text-red-400 hover:bg-red-50 p-1.5 rounded" title="ลบ"><i class="fas fa-trash"></i></button>
                     </td>
                 </tr>`).join(''); 
+        }
+
+        async function saveStudentNumbersCurrentRoom(){
+            const inputs=Array.from(document.querySelectorAll('#manageRoomTableBody [data-student-number-id]'));
+            if(!inputs.length)return Swal.fire('ยังไม่มีนักเรียนในห้องนี้','','info');
+            const values=inputs.map(function(input){return {id:String(input.dataset.studentNumberId),value:String(input.value||'').trim(),input:input};});
+            const invalid=values.find(function(item){return !/^\d+$/.test(item.value)||Number(item.value)<1;});
+            if(invalid){invalid.input.focus();return Swal.fire('เลขที่ไม่ถูกต้อง','กรุณากรอกเลขที่เป็นจำนวนเต็มตั้งแต่ 1 ขึ้นไปให้ครบทุกคน','warning');}
+            const seen=new Set(),duplicate=values.find(function(item){if(seen.has(item.value))return true;seen.add(item.value);return false;});
+            if(duplicate){duplicate.input.focus();return Swal.fire('เลขที่ซ้ำ','เลขที่ '+duplicate.value+' ถูกใช้มากกว่า 1 คนในห้องนี้','warning');}
+            const source=allStudents.length?allStudents:students;
+            values.forEach(function(item){const st=source.find(function(student){return String(student.id)===item.id;});if(st)st.no=Number(item.value);});
+            await syncDataToServer();
+            renderRoomStudents();renderSettingsStudentList();
+            Swal.fire({toast:true,position:'top-end',icon:'success',title:'บันทึกเลขที่ทั้งห้องแล้ว',showConfirmButton:false,timer:1600});
         }
 
         async function assignStudentNumbersCurrentRoom(){
